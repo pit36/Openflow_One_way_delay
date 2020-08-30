@@ -1,10 +1,9 @@
-# OpenvSwitch installation from source
+#!/bin/bash
 rm -r /home/$USER/openvswitch*
-wget http://openvswitch.org/releases/openvswitch-2.9.0.tar.gz -O /home/$USER/Downloads/openvswitch-2.9.0.tar.gz
-tar -xzf /home/$USER/Downloads/openvswitch-2.9.0.tar.gz -C /home/$USER/
+wget https://www.openvswitch.org/releases/openvswitch-2.14.0.tar.gz -O /home/$USER/Downloads/openvswitch-2.14.0.tar.gz
+tar -xzf /home/$USER/Downloads/openvswitch-2.14.0.tar.gz -C /home/$USER/
 cd /home/$USER/
-mv openvswitch-2.9.0 openvswitch
-rm openvswitch-2.9.0
+mv openvswitch-2.14.0 openvswitch
 cd /home/$USER/openvswitch/
 ./boot.sh
 ./configure --with-linux=/lib/modules/$(uname -r)/build

@@ -1,7 +1,6 @@
 make install
 make modules_install
 /sbin/modprobe openvswitch
-/sbin/modprobe openvswitch
 export PATH=$PATH:/usr/local/share/openvswitch/scripts
 ovs-ctl start
 mkdir -p /usr/local/etc/openvswitch
