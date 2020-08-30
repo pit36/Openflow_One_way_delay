@@ -1,5 +1,6 @@
 #!/bin/bash
 rm -r /home/$USER/openvswitch*
+cp ovs_install_sudo.sh /home/$USER/openvswitch/
 wget https://www.openvswitch.org/releases/openvswitch-2.14.0.tar.gz -O /home/$USER/Downloads/openvswitch-2.14.0.tar.gz
 tar -xzf /home/$USER/Downloads/openvswitch-2.14.0.tar.gz -C /home/$USER/
 cd /home/$USER/
