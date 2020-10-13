@@ -1,0 +1,16 @@
+Setting up ptp-server master (two interfaces):
+sudo ptpd -i enxa0cec8200aaa enxa0cec81d1262 -M
+
+Setting up ptp server slave:
+sudo ptpd -i s1 -s
+
+Show all qdiscs:
+sudo tc qdisc show
+
+Add delay (egress):
+sudo tc qdisc add dev enxa0cec8200aaa root netem delay 20ms
+sudo tc qdisc change dev eth0 root netem delay 30ms
+
+Find out capabilities for Hardware-timestamping:
+ethtool -T enp0s31f6
+
