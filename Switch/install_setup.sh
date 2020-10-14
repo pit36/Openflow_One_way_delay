@@ -1,4 +1,4 @@
-sudo apt-get install autoconf libtool gcc make python openssl
+sudo apt-get install autoconf libtool gcc make python openssl python-pip python3-pip
 rm -r ovs
 git clone --single-branch --branch branch-2.9 https://github.com/openvswitch/ovs.git
 # Overwrite the echo request 

@@ -3,6 +3,12 @@
 Latency and bandwith monitoring in different setups
 Routing via DFS (not Dijkstra)
 ## How do I get set up? ##
+
+### Setting up ovs:
+sudo ovs-vsctl add-br br0
+sudo ovs-vsctl add-port br0 eth0
+sudo ovs-vsctl set-controller br0 tcp::6633
+
 #### Necessary  
 * installed mininet
      * http://mininet.org/download/  
