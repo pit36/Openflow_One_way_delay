@@ -7168,9 +7168,7 @@ int64_t timestamp;
 };
 
     clock_gettime( CLOCK_REALTIME, &t);
-    int64_t ts =
-
-    (int64_t)(t.tv_sec) * (int64_t)1000000000 + (int64_t)(t.tv_nsec);
+    int64_t t_s = (int64_t)(t.tv_sec) * (int64_t)1000000000 + (int64_t)(t.tv_nsec);
 
     // filling from firstbyte of data
     //int64_t *tshp = rq+1;
@@ -7178,7 +7176,7 @@ int64_t timestamp;
 
     // look4casting
     struct timestamp * tmp = rq;
-    tmp->timestamp=ts;
+    tmp->timestamp=t_s;
 
     struct ofpbuf rq_buf = ofpbuf_const_initializer(rq, ntohs(rq->length));
 
