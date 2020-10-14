@@ -1,4 +1,5 @@
-sudo apt-get install autoconf libtool gcc make
+sudo apt-get install autoconf libtool gcc make python openssl
+rm -r ovs
 git clone --single-branch --branch branch-2.9 https://github.com/openvswitch/ovs.git
 # Overwrite the echo request 
 cp ofp-util.c ovs/lib/ofp-util.c
