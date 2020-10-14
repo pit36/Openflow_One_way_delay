@@ -1,5 +1,6 @@
 sudo apt-get install autoconf libtool gcc make
-git clone https://github.com/openvswitch/ovs.git
+git clone --single-branch --branch branch-2.9 https://github.com/openvswitch/ovs.git
+#https://github.com/openvswitch/ovs.git
 cd ovs
 ./boot.sh
 ./configure
