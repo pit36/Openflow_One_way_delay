@@ -185,6 +185,8 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.packets_drop = {}
         self.packets_drop_init = {}
 
+        self.pw_dict = {'10.0.1.2': ['ps1', 'tud'],'10.0.2.2': ['ps2', 'tud']}
+
     def create_ping_map(self,output):
         linesList = output
         i = 0
@@ -384,7 +386,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         # new ssh client
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(hostClientIP, username='pi', password='gameover')
+        ssh.connect(hostClientIP, username=self.pw_dict[hostClientIP][0], password=self.pw_dict[hostClientIP][1])
 
         #time.sleep(5)
         firstVal = 95
@@ -411,12 +413,12 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.iperfMeasurementReady = True
         ssh.close()
 
-    def addingBwIperfServer(self,serverIP, port= 5001):
+    def addingBwIperfServer(self,serverIP,  port= 5001):
 
         # new ssh client
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(serverIP, username='pi', password='gameover')
+        ssh.connect(serverIP, username=self.pw_dict[serverIP][0], password=self.pw_dict[serverIP][1])
 
         stdin, stdout, stderr = ssh.exec_command("iperf -s -u -p {}".format(port))
         while True:
@@ -432,7 +434,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         # new ssh client
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(hostIP, username='pi', password='gameover')
+        ssh.connect(hostIP, username=self.pw_dict[hostIP][0], password=self.pw_dict[hostIP][1])
 
         command1 = 'sudo tc -s qdisc ls dev eth0 | grep -E -o "backlog [0-9]+b [0-9]+p" | grep -E -o "[0-9]+p" | grep -E -o "[0-9]+"'
         command2 = 'sudo tc -s qdisc ls dev eth0 | grep -E -o "dropped [0-9]+" | grep -E -o "[0-9]+"'
@@ -466,50 +468,11 @@ class SimpleSwitch13(app_manager.RyuApp):
             # each 1 sec
             time.sleep(1)
 
-    def installTcpSocketServer(self, hostIP):
-
-        # new ssh client
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(hostIP, username='pi', password='gameover')
-
-        ssh.exec_command("sudo python ts.py ")
-
-    def installTcpSocketClient(self, host):
-        time.sleep(ADDITIONAL_WAITING_TIME)
-        s = socket.socket()  # Create a socket object
-        port = 12345  # Reserve a port for your service.
-        self.socket_output[host] = []
-        t_monitoring = 0.5
-        socketSteps = int((self.timeTillPlot) / t_monitoring - 2)
-        self.socketReady[host] = False
-        self.logger.info("monitoring socket client started")
-        s.connect((host, port))
-        for i in range(socketSteps):
-            t1 = time.time()
-            s.send('ts'.encode("utf-8"))
-            t = float(s.recv(1024))
-            t2 = time.time()
-            # in ms
-            totalRTT = (t2 - t1) * 1000
-            TC2Sw = (t - t1) * 1000
-            TSw2C = (t2 - t) * 1000
-            time.sleep(t_monitoring)
-
-            socketElement = {}
-            socketElement['Ts'] = t1
-            socketElement['TC2Sw'] = TC2Sw
-            socketElement['TSw2C'] = TC2Sw
-            self.socket_output[host].append(socketElement)
-
-        s.close()  # Close the socket when done
-        self.socketReady[host] = True
-
     def changeLatency(self, ipConnecting, socketChanging='eth0', value=30, limit=1000):
         # new ssh client
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(ipConnecting, username='pi', password='gameover')
+        ssh.connect(ipConnecting, username=self.pw_dict[ipConnecting][0], password=self.pw_dict[ipConnecting][1])
         self.logger.info('Latency changed for: {} to {}'.format(socketChanging, value))
         # for egress
         command = 'sudo tc qdisc change dev {} root netem delay {}ms limit {}'.format(socketChanging, value, limit)
@@ -524,7 +487,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         # new ssh client
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(hostIP, username='pi', password='gameover')
+        ssh.connect(hostIP, username=self.pw_dict[hostIP][0], password=self.pw_dict[hostIP][1])
 
         self.ping_ready[clientIP] = False
         self.logger.info("Starting ping in between to: {} from {}".format(clientIP, hostIP))
@@ -1492,3 +1455,41 @@ class SimpleSwitch13(app_manager.RyuApp):
             time.sleep(1)
             hub.spawn(self.installTcpSocketClient, SWITCH_IP_1)
             hub.spawn(self.installTcpSocketClient, SWITCH_IP_2)
+    def installTcpSocketServer(self, hostIP):
+
+            # new ssh client
+            ssh = paramiko.SSHClient()
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            ssh.connect(hostIP, username='pi', password='gameover')
+
+            ssh.exec_command("sudo python ts.py ")
+
+    def installTcpSocketClient(self, host):
+        time.sleep(ADDITIONAL_WAITING_TIME)
+        s = socket.socket()  # Create a socket object
+        port = 12345  # Reserve a port for your service.
+        self.socket_output[host] = []
+        t_monitoring = 0.5
+        socketSteps = int((self.timeTillPlot) / t_monitoring - 2)
+        self.socketReady[host] = False
+        self.logger.info("monitoring socket client started")
+        s.connect((host, port))
+        for i in range(socketSteps):
+            t1 = time.time()
+            s.send('ts'.encode("utf-8"))
+            t = float(s.recv(1024))
+            t2 = time.time()
+            # in ms
+            totalRTT = (t2 - t1) * 1000
+            TC2Sw = (t - t1) * 1000
+            TSw2C = (t2 - t) * 1000
+            time.sleep(t_monitoring)
+
+            socketElement = {}
+            socketElement['Ts'] = t1
+            socketElement['TC2Sw'] = TC2Sw
+            socketElement['TSw2C'] = TC2Sw
+            self.socket_output[host].append(socketElement)
+
+        s.close()  # Close the socket when done
+        self.socketReady[host] = True
