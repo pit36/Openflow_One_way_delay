@@ -34,15 +34,18 @@ DEFAULT_BW = 10000000
 
 MAX_PATHS = 2
 
-SWITCH_IP_1 = '10.42.0.179'
-SWITCH_IP_2 = '10.42.1.239'
+# For synchronisation
+SWITCH_IP_1 = '172.31.1.101'
+SWITCH_IP_2 = '172.31.1.102'
 
-SWITCH_IP_1_2 = '10.40.0.3'
-SWITCH_IP_2_2 = '10.40.0.2'
+# For controller-switch connection
+SWITCH_IP_1_2 = '10.0.1.2'
+SWITCH_IP_2_2 = '10.0.2.2'
 
-INTERFACE_1 = 'enxa0cec81d1262'
-INTERFACE_2 = 'enxa0cec8200aaa'
+INTERFACE_1 = 'eth0'#'enxa0cec81d1262'
+INTERFACE_2 = 'eth1'#'enxa0cec8200aaa'
 
+# IP for the OpenVSwitches in between, IPs of the swithces
 SWITCH_IP_1_inBetween = '10.0.0.1'
 SWITCH_IP_2_inBetween = '10.0.0.2'
 
@@ -582,15 +585,6 @@ class SimpleSwitch13(app_manager.RyuApp):
             hub.spawn(self.checkBacklog, SWITCH_IP_1_2)
             hub.spawn(self.checkBacklog, SWITCH_IP_2_2)
 
-    def monitor_sockets(self):
-        if MININET == False:
-            self.logger.info("monitoring socket started 1")
-            # installing server over safe timesync conn
-            hub.spawn(self.installTcpSocketServer, SWITCH_IP_1_2)
-            hub.spawn(self.installTcpSocketServer, SWITCH_IP_2_2)
-            time.sleep(1)
-            hub.spawn(self.installTcpSocketClient, SWITCH_IP_1)
-            hub.spawn(self.installTcpSocketClient, SWITCH_IP_2)
 
     def monitor_echo(self, datapath):
         time.sleep(ADDITIONAL_WAITING_TIME)
@@ -1487,3 +1481,14 @@ class SimpleSwitch13(app_manager.RyuApp):
                     the_file15.write(json.dumps(self.saved_rtt_to_dpid_portStats))
 
         self.allreadyPlotted = True
+
+# Kick out
+    def monitor_sockets(self):
+        if MININET == False:
+            self.logger.info("monitoring socket started 1")
+            # installing server over safe timesync conn
+            hub.spawn(self.installTcpSocketServer, SWITCH_IP_1_2)
+            hub.spawn(self.installTcpSocketServer, SWITCH_IP_2_2)
+            time.sleep(1)
+            hub.spawn(self.installTcpSocketClient, SWITCH_IP_1)
+            hub.spawn(self.installTcpSocketClient, SWITCH_IP_2)
