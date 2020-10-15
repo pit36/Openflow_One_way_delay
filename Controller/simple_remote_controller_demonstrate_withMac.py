@@ -74,6 +74,9 @@ TESTTYPE = 'Normal'
 # PORTSTATS -> only recieving portstats
 MEASUREMENTTYPE = 'ECHORTT'
 
+# If Web Interface should be included
+WITH_WEB_INTERFACE = False
+
 # update rate in s
 UPDATE_INTERVAL_CSW = 0.51
 UPDATE_INTERVAL_LAT = 1
@@ -147,7 +150,8 @@ class SimpleSwitch13(app_manager.RyuApp):
 
         ########## Processes ############
         # starting rest API
-        hub.spawn(self.run_DB)
+        if WITH_WEB_INTERFACE:
+            hub.spawn(self.run_DB)
         # starting updateThread
         hub.spawn(self.checkingUpdates)
         # starting ping monitoring (thread)
@@ -158,10 +162,7 @@ class SimpleSwitch13(app_manager.RyuApp):
             self.changeLatency(SWITCH_IP_1_2, 'eth0', 0.001, 3000)
             self.changeLatency(SWITCH_IP_2_2, 'eth0', 0.001, 3000)
 
-        # socket
-        self.socket_output = {}
-        self.socketReady = {}
-        self.monitor_sockets()
+        
 
         # iperf
         self.iperfAlready = False
@@ -186,6 +187,12 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.packets_drop_init = {}
 
         self.pw_dict = {'10.0.1.2': ['ps1', 'tud'],'10.0.2.2': ['ps2', 'tud']}
+
+        ########### TODO: kick out
+        # socket
+        #self.socket_output = {}
+        #self.socketReady = {}
+        #self.monitor_sockets()
 
     def create_ping_map(self,output):
         linesList = output
@@ -1449,10 +1456,11 @@ class SimpleSwitch13(app_manager.RyuApp):
     def monitor_sockets(self):
         if MININET == False:
             self.logger.info("monitoring socket started 1")
+            # maybe kick out
             # installing server over safe timesync conn
             hub.spawn(self.installTcpSocketServer, SWITCH_IP_1_2)
             hub.spawn(self.installTcpSocketServer, SWITCH_IP_2_2)
-            time.sleep(1)
+            #time.sleep(1)
             hub.spawn(self.installTcpSocketClient, SWITCH_IP_1)
             hub.spawn(self.installTcpSocketClient, SWITCH_IP_2)
     def installTcpSocketServer(self, hostIP):
