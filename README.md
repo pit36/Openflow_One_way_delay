@@ -7,7 +7,7 @@ Routing via DFS (not Dijkstra)
 ### Setting up ovs:
 sudo ovs-vsctl add-br br0
 sudo ovs-vsctl add-port br0 eth0
-sudo ovs-vsctl set-controller br0 tcp::6633
+sudo ovs-vsctl set-controller br0 tcp:<Controller_IP>:6633
 
 #### Necessary  
 * installed mininet

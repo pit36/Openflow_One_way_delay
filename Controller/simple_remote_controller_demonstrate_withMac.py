@@ -65,7 +65,7 @@ MININET = False
 # ONELONGTIME = one latency measurement
 
 # IMPORTANT: While measurement, RTT is useless because only every second value is taken
-TESTTYPE = 'IPERF'
+TESTTYPE = 'Normal'
 
 # ALL -> statisticrequest, echo + echoboth
 # RTT -> statisticreq
