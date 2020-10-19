@@ -1,6 +1,10 @@
 # ovs
 Switch/ovs
 
+# DB
+Controller/crud.sqlite
+Controller/data
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

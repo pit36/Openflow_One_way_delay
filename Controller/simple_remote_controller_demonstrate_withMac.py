@@ -1361,6 +1361,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                 with open('data/{}/whole_data.txt'.format(timeStampStr), 'w') as the_file2:
                     the_file2.write(json.dumps(self.data_map))
 
+                print("Writing ping data")
                 sw1data = self.create_ping_map(self.output[SWITCH_IP_1][0].decode("utf-8").splitlines())
                 sw2data = self.create_ping_map(self.output[SWITCH_IP_2][0].decode("utf-8").splitlines())
 
@@ -1387,11 +1388,13 @@ class SimpleSwitch13(app_manager.RyuApp):
                 try:
                     sw1_in_between_data = self.create_ping_map(self.output[SWITCH_IP_1_inBetween])
                     sw2_in_between_data = self.create_ping_map(self.output[SWITCH_IP_2_inBetween])
+                    print("Got data ping in between")
                     # saving data
                     with open('data/{}/output_ping_1_inBetween.txt'.format(timeStampStr), 'w') as the_file5:
                         the_file5.write(json.dumps(sw1_in_between_data))
                     with open('data/{}/output_ping_2_inBetween.txt'.format(timeStampStr), 'w') as the_file6:
                         the_file6.write(json.dumps(sw2_in_between_data))
+                    print("Wrote data ping in between")
                 except Exception as e:
                     #with open('whole_data.txt', 'w') as the_file1:
                     #    the_file1.write(str(self.output))
