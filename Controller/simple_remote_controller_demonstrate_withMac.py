@@ -498,7 +498,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.logger.info("Starting ping in between to: {} from {}".format(clientIP, hostIP))
         time.sleep(1)
         pingtime = int((self.timeTillPlot) * 9.99/5 - 2)
-        
+
         # testing ssh connection and sudo rights
         cmd_test = 'sudo ls'
         stdin, stdout, stderr = ssh.exec_command(cmd_test)
@@ -1399,21 +1399,23 @@ class SimpleSwitch13(app_manager.RyuApp):
                     self.logger.info("EXCEPTION len1 In between: {}".format(len(self.output[SWITCH_IP_1_inBetween])))
                     self.logger.info("EXCEPTION len2 In between: {}".format(len(self.output[SWITCH_IP_2_inBetween])))
                     self.logger.info("EXCEPTION Raspberry In between: {}".format(e))
-            #socket
-            while self.socketReady[SWITCH_IP_1] == False or self.socketReady[SWITCH_IP_2] == False:
-                # if empty
-                self.logger.info("no ping value - waiting 1 sec")
-                time.sleep(1)
-            self.logger.info("In Socket !!!!!!!!!!!!!!!!")
-            try:
-                if(len(self.socket_output.keys())>0):
-                    with open('data/{}/output_socket_1.txt'.format(timeStampStr), 'w') as the_file7:
-                        the_file7.write(json.dumps(self.socket_output[SWITCH_IP_1]))
-                    with open('data/{}/output_socket_2.txt'.format(timeStampStr), 'w') as the_file8:
-                        the_file8.write(json.dumps(self.socket_output[SWITCH_IP_2]))
-            except Exception as e:
-                self.logger.info("EXCEPTION Socket: {}".format(e))
+
+            # TODO: kick out socket
+            #while self.socketReady[SWITCH_IP_1] == False or self.socketReady[SWITCH_IP_2] == False:
+            #    # if empty
+            #    self.logger.info("no ping value - waiting 1 sec")
+            #    time.sleep(1)
+            #self.logger.info("In Socket !!!!!!!!!!!!!!!!")
+            #try:
+            #    if(len(self.socket_output.keys())>0):
+            #        with open('data/{}/output_socket_1.txt'.format(timeStampStr), 'w') as the_file7:
+            #            the_file7.write(json.dumps(self.socket_output[SWITCH_IP_1]))
+            #        with open('data/{}/output_socket_2.txt'.format(timeStampStr), 'w') as the_file8:
+            #            the_file8.write(json.dumps(self.socket_output[SWITCH_IP_2]))
+            #except Exception as e:
+            #    self.logger.info("EXCEPTION Socket: {}".format(e))
             # if lantencchanging - pings should be ready
+            
             if TESTTYPE == 'CHANGINGLAT' or TESTTYPE == 'CHANGINGLATTOSHOWDIFFERENCE' or TESTTYPE == 'ONELONGTIME' or TESTTYPE == 'CHANGINGLATCONTROLLER':
                 try:
                     with open('data/{}/output_changingLat_1.txt'.format(timeStampStr), 'w') as the_file9:
