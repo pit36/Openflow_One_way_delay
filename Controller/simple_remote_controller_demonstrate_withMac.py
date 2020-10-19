@@ -162,8 +162,6 @@ class SimpleSwitch13(app_manager.RyuApp):
             self.changeLatency(SWITCH_IP_1_2, 'eth0', 0.001, 3000)
             self.changeLatency(SWITCH_IP_2_2, 'eth0', 0.001, 3000)
 
-        
-
         # iperf
         self.iperfAlready = False
         self.iperfMeasurementReady = False
@@ -500,9 +498,19 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.logger.info("Starting ping in between to: {} from {}".format(clientIP, hostIP))
         time.sleep(1)
         pingtime = int((self.timeTillPlot) * 9.99/5 - 2)
-
-
-        command = 'sudo ping {} -D -c {} -i 0.5 |head -n -3 | grep -E "[0-9]+\.?[0-9]+ ms" | grep -o -E "\[[0-9]+\.[0-9]+\]|[0-9]+\.?[0-9]+ ms" | grep -o -E "[0-9]+\.?[0-9]+"'.format(clientIP, pingtime)
+        
+        # testing ssh connection and sudo rights
+        cmd_test = 'sudo ls'
+        stdin, stdout, stderr = ssh.exec_command(cmd_test)
+        while True:
+            data = stdout.readlines()
+            dataErr = stderr.readlines()
+            if len(data) > 0:
+                print("Passed test ssh host: {} to: {}".format(hostIP, clientIP))
+                break
+            time.sleep(0.1)
+        
+        command = 'sudo ping {} -D -c {} -i 0.5 | head -n -3 | grep -E "[0-9]+\.?[0-9]+ ms" | grep -o -E "\[[0-9]+\.[0-9]+\]|[0-9]+\.?[0-9]+ ms" | grep -o -E "[0-9]+\.?[0-9]+"'.format(clientIP, pingtime)
 
         timebefore = time.time()
         stdin, stdout, stderr = ssh.exec_command(command)
@@ -516,10 +524,9 @@ class SimpleSwitch13(app_manager.RyuApp):
             time.sleep(0.1)
         #self.logger.info("End of ssh, answer: {}".format(data))
         self.output[clientIP] = data
-
         self.ping_ready[clientIP] = True
 
-    def monitor_ping(self, host):
+    def monitor_ping(self, host, ping_interval = 0.1):
         time.sleep(ADDITIONAL_WAITING_TIME+1.0)
         self.ping_ready[host] = False
         time.sleep(0.5)
@@ -539,7 +546,6 @@ class SimpleSwitch13(app_manager.RyuApp):
             hub.spawn(self.monitor_ping, LOOPBACK_IP)
         else:
             self.logger.info("Starting Ping Rasperry")
-
             hub.spawn(self.monitor_ping, SWITCH_IP_1)
             hub.spawn(self.monitor_ping, SWITCH_IP_2)
         # between the raspian
@@ -554,7 +560,6 @@ class SimpleSwitch13(app_manager.RyuApp):
             # checking backlog
             hub.spawn(self.checkBacklog, SWITCH_IP_1_2)
             hub.spawn(self.checkBacklog, SWITCH_IP_2_2)
-
 
     def monitor_echo(self, datapath):
         time.sleep(ADDITIONAL_WAITING_TIME)
@@ -608,10 +613,8 @@ class SimpleSwitch13(app_manager.RyuApp):
         ofp_parser = datapath.ofproto_parser
 
         req = ofp_parser.OFPPortStatsRequest(datapath, 0, ofp.OFPP_ANY)
-
         # save timeStamp for RTT
         self.rtt_port_stats_sent[datapath.id] = time.time()
-
         datapath.send_msg(req)
 
     @set_ev_cls(ofp_event.EventOFPPortStatsReply, MAIN_DISPATCHER)
@@ -900,16 +903,17 @@ class SimpleSwitch13(app_manager.RyuApp):
         out_port = ofproto.OFPP_FLOOD
 
         # triggered if 4example ping
-        if arp_pkt:
-            # print dpid, pkt
+        if arp_pkt:            
             src_ip = arp_pkt.src_ip
             dst_ip = arp_pkt.dst_ip
+            print("getting ARP packet.. Src: {} Dst: {}".format(src_ip, dst_ip))
             if arp_pkt.opcode == arp.ARP_REPLY:
                 self.arp_table[src_ip] = src
                 h1 = self.hosts[src]
                 h2 = self.hosts[dst]
                 out_port = self.install_paths(h1[0], h1[1], h2[0], h2[1], src_ip, dst_ip)
                 self.install_paths(h2[0], h2[1], h1[0], h1[1], dst_ip, src_ip) # reverse
+                print("Its a reply")
             elif arp_pkt.opcode == arp.ARP_REQUEST:
                 if dst_ip in self.arp_table:
                     self.arp_table[src_ip] = src
@@ -918,6 +922,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                     h2 = self.hosts[dst_mac]
                     out_port = self.install_paths(h1[0], h1[1], h2[0], h2[1], src_ip, dst_ip)
                     self.install_paths(h2[0], h2[1], h1[0], h1[1], dst_ip, src_ip) # reverse
+                    print("Its a request")
 
         # -------------------
 
@@ -1083,6 +1088,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         s2 = ev.link.dst
         self.adjacency[s1.dpid][s2.dpid] = s1.port_no
         self.adjacency[s2.dpid][s1.dpid] = s2.port_no
+
     ###########################----------------########################
     ###########################changed
     @set_ev_cls(event.EventLinkDelete, MAIN_DISPATCHER)
@@ -1375,8 +1381,8 @@ class SimpleSwitch13(app_manager.RyuApp):
             # for the ping between the switches
             if (SWITCH_IP_1_inBetween in self.ping_ready.keys()) and (SWITCH_IP_2_inBetween in self.ping_ready.keys()):
                 while (self.ping_ready[SWITCH_IP_1_inBetween] == False)  or (self.ping_ready[SWITCH_IP_2_inBetween] == False):
-                    # if empty
-                    self.logger.info("no ping value in between- waiting 1 sec")
+                    # if empty                    
+                    self.logger.info("no ping value in between- waiting 1 sec: {}".format(self.ping_ready))
                     time.sleep(1)
                 try:
                     sw1_in_between_data = self.create_ping_map(self.output[SWITCH_IP_1_inBetween])
