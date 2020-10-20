@@ -77,10 +77,14 @@ MEASUREMENTTYPE = 'ECHORTT'
 # If Web Interface should be included
 WITH_WEB_INTERFACE = False
 
+# If performance with socket also should be evaluated
+WITH_SOCKET = False
+
 # update rate in s
 UPDATE_INTERVAL_CSW = 0.51
 UPDATE_INTERVAL_LAT = 1
 
+# Waiting time before Measurements start
 ADDITIONAL_WAITING_TIME = 10
 
 class SimpleSwitch13(app_manager.RyuApp):
@@ -88,6 +92,9 @@ class SimpleSwitch13(app_manager.RyuApp):
 
     def __init__(self, *args, **kwargs):
         super(SimpleSwitch13, self).__init__(*args, **kwargs)
+
+        # dictionary for login to ssh server
+        self.pw_dict = {'10.0.1.2': ['ps1', 'tud'],'10.0.2.2': ['ps2', 'tud']}
         # self.mac_to_port = {}
         self.dpidToDatapath = {}
         # TODO: matching the macs to dpid
@@ -108,7 +115,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.echo_timeToC = {}
         self.rtt_portStats_to_dpid = {}
 
-        # bundled saving RTT/echo times
+        # bundled saving RTT/Echo times
         self.saved_rtt_to_dpid = {}
         self.saved_echo_rtt_to_dpid = {}
         self.saved_echo_timeToSw = {}
@@ -173,18 +180,14 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.changingLatMap = {}
         self.changedAlready = False
 
-        self.logger.info("Init1")
         # when system is started
         self.startingTime = time.time() + ADDITIONAL_WAITING_TIME
-        self.logger.info("Init2")
 
         self.changeit = 30.0
 
         self.backlog = {}
         self.packets_drop = {}
-        self.packets_drop_init = {}
-
-        self.pw_dict = {'10.0.1.2': ['ps1', 'tud'],'10.0.2.2': ['ps2', 'tud']}
+        self.packets_drop_init = {}        
 
         ########### TODO: kick out
         # socket
@@ -206,6 +209,7 @@ class SimpleSwitch13(app_manager.RyuApp):
     def checkingUpdates(self):
         # waiting that all data is together
         time.sleep(ADDITIONAL_WAITING_TIME + 1.1)
+
         if (TESTTYPE == 'CHANGINGLATCONTROLLER'):
             latencyValue1 = 40.0
             latencyValue2 = 40.0
@@ -225,6 +229,7 @@ class SimpleSwitch13(app_manager.RyuApp):
 
         if(TESTTYPE == 'CHANGINGLATTOSHOWDIFFERENCE'):
             self.changeLatency(SWITCH_IP_2_2, 'eth0', 0.0)
+
         if(TESTTYPE == 'ONELONGTIME'):
             pass
             self.changeLatency(SWITCH_IP_2_2, 'eth0', 0.0)
@@ -243,8 +248,8 @@ class SimpleSwitch13(app_manager.RyuApp):
             latencyChangingElement2['value'] = latencyValue2
             self.changingLatMap[SWITCH_IP_1_2].append(latencyChangingElement1)
             self.changingLatMap[SWITCH_IP_2_2].append(latencyChangingElement2)
-
             self.logger.info('LatencychangeMap: {}'.format(self.changingLatMap))
+
         while True:
             # matrix creation
             # latencyMatrix = matrix_np.create_matrix(self.data_map, 'latency')
@@ -257,7 +262,6 @@ class SimpleSwitch13(app_manager.RyuApp):
                     hub.spawn(self.addingBwIperfServer, SWITCH_IP_2_2)
                     # 1st switch
                     hub.spawn(self.addingBwIperfClient, SWITCH_IP_1_2, SWITCH_IP_2_inBetween)
-
                     self.iperfAlready = True
 
             if TESTTYPE == 'CHANGINGLATTOSHOWDIFFERENCE' and MININET == False:
@@ -266,7 +270,6 @@ class SimpleSwitch13(app_manager.RyuApp):
                 if self.changeit < time.time() - self.startingTime and self.changeit+10.0 > time.time() - self.startingTime:
                     latencyValue1 = self.changeit
                     self.changeLatency(SWITCH_IP_1_2, 'eth0', latencyValue1)
-
                     if (SWITCH_IP_1_2 not in self.changingLatMap.keys()):
                         self.changingLatMap[SWITCH_IP_1_2] = []
                         self.changingLatMap[SWITCH_IP_2_2] = []
@@ -479,7 +482,8 @@ class SimpleSwitch13(app_manager.RyuApp):
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(ipConnecting, username=self.pw_dict[ipConnecting][0], password=self.pw_dict[ipConnecting][1])
         self.logger.info('Latency changed for: {} to {}'.format(socketChanging, value))
-        # for egress
+        # for egress queue
+        # limit is the queue size
         command = 'sudo tc qdisc change dev {} root netem delay {}ms limit {}'.format(socketChanging, value, limit)
         self.logger.info('LatencyChangingCmd : {}'.format(command))
         stdin, stdout, stderr = ssh.exec_command(command)
@@ -548,9 +552,9 @@ class SimpleSwitch13(app_manager.RyuApp):
             self.logger.info("Starting Ping Rasperry")
             hub.spawn(self.monitor_ping, SWITCH_IP_1)
             hub.spawn(self.monitor_ping, SWITCH_IP_2)
-        # between the raspian
+        # Between the raspian
         if MININET == False:
-            # taking the safe route (for time synchronisation)
+            # Taking the safe route (for time synchronisation)
             hub.spawn(self.monitor_pingConnectionbetweenswitches, SWITCH_IP_1_2, SWITCH_IP_2_inBetween)
             hub.spawn(self.monitor_pingConnectionbetweenswitches, SWITCH_IP_2_2, SWITCH_IP_1_inBetween)
 
@@ -1306,7 +1310,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                 if not os.path.exists(dir):
                     os.makedirs(dir)
                 print("02")
-                with open('data/{}/whole_data.txt'.format(timeStampStr), 'w') as the_file2:
+                with open('data/{}/whole_data.json'.format(timeStampStr), 'w') as the_file2:
                     the_file2.write(json.dumps(self.data_map))
                 print("03")
 
@@ -1314,21 +1318,21 @@ class SimpleSwitch13(app_manager.RyuApp):
                 if (MEASUREMENTTYPE == 'RTT' or  MEASUREMENTTYPE == 'ALL'):
 
                     print("1")
-                    with open('data/{}/RTT.txt'.format(timeStampStr), 'w') as the_file11:
+                    with open('data/{}/RTT.json'.format(timeStampStr), 'w') as the_file11:
                         the_file11.write(json.dumps(self.saved_rtt_to_dpid))
                 if (MEASUREMENTTYPE == 'ECHO' or MEASUREMENTTYPE == 'ALL'):
                     print("2")
-                    with open('data/{}/RTT_Echo.txt'.format(timeStampStr), 'w') as the_file12:
+                    with open('data/{}/RTT_Echo.json'.format(timeStampStr), 'w') as the_file12:
                         the_file12.write(json.dumps(self.saved_echo_rtt_to_dpid))
                     print("2")
-                    with open('data/{}/Sw2Con.txt'.format(timeStampStr), 'w') as the_file13:
+                    with open('data/{}/Sw2Con.json'.format(timeStampStr), 'w') as the_file13:
                         the_file13.write(json.dumps(self.saved_echo_timeToSw))
                     print("2")
-                    with open('data/{}/Con2Sw.txt'.format(timeStampStr), 'w') as the_file14:
+                    with open('data/{}/Con2Sw.json'.format(timeStampStr), 'w') as the_file14:
                         the_file14.write(json.dumps(self.saved_echo_timeToC))
                 if (MEASUREMENTTYPE == 'PORTSTATS'or  MEASUREMENTTYPE == 'ALL'):
                     print("3")
-                    with open('data/{}/Port_Stats.txt'.format(timeStampStr), 'w') as the_file15:
+                    with open('data/{}/Port_Stats.json'.format(timeStampStr), 'w') as the_file15:
                         the_file15.write(json.dumps(self.saved_rtt_to_dpid_portStats))
             except Exception as e:
                 self.logger.info("EXCEPTION Output: {}, {}".format(self.output.keys(), self.data_map.keys()))
@@ -1358,7 +1362,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                 # saving data
                 # with open('output_ping_whole.txt', 'a') as the_file:
                 #    the_file.write(json.dumps(self.output))
-                with open('data/{}/whole_data.txt'.format(timeStampStr), 'w') as the_file2:
+                with open('data/{}/whole_data.json'.format(timeStampStr), 'w') as the_file2:
                     the_file2.write(json.dumps(self.data_map))
 
                 print("Writing ping data")
@@ -1366,19 +1370,20 @@ class SimpleSwitch13(app_manager.RyuApp):
                 sw2data = self.create_ping_map(self.output[SWITCH_IP_2][0].decode("utf-8").splitlines())
 
                 # saving data
-                with open('data/{}/output_ping_1.txt'.format(timeStampStr), 'w') as the_file3:
+                with open('data/{}/output_ping_1.json'.format(timeStampStr), 'w') as the_file3:
                     the_file3.write(json.dumps(sw1data))
-                with open('data/{}/output_ping_2.txt'.format(timeStampStr), 'w') as the_file4:
+                with open('data/{}/output_ping_2.json'.format(timeStampStr), 'w') as the_file4:
                     the_file4.write(json.dumps(sw2data))
                 #matrix_np.plot(self.data_map, self.startingTime, self.saved_rtt_to_dpid,
                 #               self.saved_echo_rtt_to_dpid, self.saved_echo_timeToSw,
                 #               self.saved_echo_timeToC,
                 #               sw1data, sw2data)
             except Exception as e:
-                with open('data/{}/whole_data_output.txt'.format(timeStampStr), 'w') as the_file1:
+                with open('data/{}/whole_data_output.json'.format(timeStampStr), 'w') as the_file1:
                     the_file1.write(str(self.output))
                 self.logger.info("EXCEPTION Output: {}".format(self.output.keys()))
                 self.logger.info("EXCEPTION Rasperry: {}".format(e))
+                
             # for the ping between the switches
             if (SWITCH_IP_1_inBetween in self.ping_ready.keys()) and (SWITCH_IP_2_inBetween in self.ping_ready.keys()):
                 while (self.ping_ready[SWITCH_IP_1_inBetween] == False)  or (self.ping_ready[SWITCH_IP_2_inBetween] == False):
@@ -1390,9 +1395,9 @@ class SimpleSwitch13(app_manager.RyuApp):
                     sw2_in_between_data = self.create_ping_map(self.output[SWITCH_IP_2_inBetween])
                     print("Got data ping in between")
                     # saving data
-                    with open('data/{}/output_ping_1_inBetween.txt'.format(timeStampStr), 'w') as the_file5:
+                    with open('data/{}/output_ping_1_inBetween.json'.format(timeStampStr), 'w') as the_file5:
                         the_file5.write(json.dumps(sw1_in_between_data))
-                    with open('data/{}/output_ping_2_inBetween.txt'.format(timeStampStr), 'w') as the_file6:
+                    with open('data/{}/output_ping_2_inBetween.json'.format(timeStampStr), 'w') as the_file6:
                         the_file6.write(json.dumps(sw2_in_between_data))
                     print("Wrote data ping in between")
                 except Exception as e:
@@ -1461,6 +1466,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                 with open('data/{}/Port_Stats.txt'.format(timeStampStr), 'w') as the_file15:
                     the_file15.write(json.dumps(self.saved_rtt_to_dpid_portStats))
 
+        print("Finished printing plot data")
         self.allreadyPlotted = True
 
 # Kick out
@@ -1475,14 +1481,11 @@ class SimpleSwitch13(app_manager.RyuApp):
             hub.spawn(self.installTcpSocketClient, SWITCH_IP_1)
             hub.spawn(self.installTcpSocketClient, SWITCH_IP_2)
     def installTcpSocketServer(self, hostIP):
-
             # new ssh client
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             ssh.connect(hostIP, username='pi', password='gameover')
-
             ssh.exec_command("sudo python ts.py ")
-
     def installTcpSocketClient(self, host):
         time.sleep(ADDITIONAL_WAITING_TIME)
         s = socket.socket()  # Create a socket object

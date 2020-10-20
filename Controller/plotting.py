@@ -195,8 +195,7 @@ def plotLatencyChangeRTT(dataMap, timeTillStart):
                 y2Diff.append(yArray2[i2] - yArrayChange2To1[j2])
                 x2Diff.append(xValue)
         #yValue = xArray2[i2]
-        # check to which refe
-
+        # check to which refer
 
     ax11.grid()
     ax21.grid()
@@ -1756,4 +1755,4 @@ def getAdjMatrix(wholeData):
     latavg2 = {}
     latavg2[key2] = {}
     latavg2[key2][key1] = latavg[key1][key2]
-    print latavg
+    print(latavg)

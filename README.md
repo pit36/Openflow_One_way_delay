@@ -24,6 +24,7 @@ ip link set br0 up
     * flask_sqlalchemy
     * flask_marshmallow
     * numpy
+    * matplotlib
 
 ### How to deploy:  
 * clone repository
