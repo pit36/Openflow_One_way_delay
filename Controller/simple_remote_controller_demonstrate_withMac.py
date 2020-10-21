@@ -918,7 +918,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                 self.arp_table[src_ip] = src
                 h1 = self.hosts[src]
                 h2 = self.hosts[dst]
-                out_port = self.install_paths(h1[0], h1[1], h2[0], h2[1], src_ip, dst_ip)
+                #out_port = self.install_paths(h1[0], h1[1], h2[0], h2[1], src_ip, dst_ip)
                 #self.install_paths(h2[0], h2[1], h1[0], h1[1], dst_ip, src_ip) # reverse
                 print("Its a reply")
             elif arp_pkt.opcode == arp.ARP_REQUEST:
@@ -928,7 +928,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                     h1 = self.hosts[src]
                     h2 = self.hosts[dst_mac]
                     out_port = self.install_paths(h1[0], h1[1], h2[0], h2[1], src_ip, dst_ip)
-                    #self.install_paths(h2[0], h2[1], h1[0], h1[1], dst_ip, src_ip) # reverse
+                    self.install_paths(h2[0], h2[1], h1[0], h1[1], dst_ip, src_ip) # reverse
                     print("Its a request")
 
         # -------------------
