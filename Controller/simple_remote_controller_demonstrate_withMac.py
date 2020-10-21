@@ -140,8 +140,8 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.topology_api_app = self
         self.datapath_list = {}
         self.arp_table = {}
-        self.switches = [] #4294967294
-        self.hosts = {'90:1b:0e:cb:8d:94': (158445886737823, 1), '90:1b:0e:cb:8d:9f': (158445886737812, 1)}
+        self.switches = [] #1
+        self.hosts = {'90:1b:0e:cb:8d:94': (158445886737823, 4294967294), '90:1b:0e:cb:8d:9f': (158445886737812, 4294967294)}
         self.multipath_group_ids = {}
         self.group_ids = []
         self.adjacency = defaultdict(dict)
