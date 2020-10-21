@@ -927,15 +927,13 @@ class SimpleSwitch13(app_manager.RyuApp):
                     dst_mac = self.arp_table[dst_ip]
                     h1 = self.hosts[src]
                     h2 = self.hosts[dst_mac]
-                    #out_port = self.install_paths(h1[0], h1[1], h2[0], h2[1], src_ip, dst_ip)
+                    out_port = self.install_paths(h1[0], h1[1], h2[0], h2[1], src_ip, dst_ip)
                     #self.install_paths(h2[0], h2[1], h1[0], h1[1], dst_ip, src_ip) # reverse
                     print("Its a request")
 
         # -------------------
-
+        # if measurement packet 
         if (eth.ethertype == 0x07c3):
-
-            
 
             pkt_header_list = pkt[-1].decode("utf-8").split('#')
 
@@ -1003,9 +1001,6 @@ class SimpleSwitch13(app_manager.RyuApp):
                         latencyObjPort['timestamp'] = timestampSent
                         latencyObjPort['value'] = latencyLinkPortStatsRTT * 1000
                         self.data_map[dpidRec][dpidSent]['latencyPortStats'].append(latencyObjPort)
-                # TODO: debug
-                # self.logger.info("DpidRec: {} Latency RTT: {}ms Latency EchoRTT: {}ms Latency Echo: {}".format(dpidRec,latencyLinkRTT*1000, latencyLinkEchoRTT*1000, latencyLinkEcho*1000))
-                # self.logger.info("DpidRec: {} Difference RTT-Echo: {}ms".format(dpidRec, (latencyLinkRTT - latencyLinkEcho)*1000) )
                 # overlapped packeges thrown away
                 self.lastArrivedPackage[dpidRec][dpidSent] = time.time()
 
@@ -1282,13 +1277,13 @@ class SimpleSwitch13(app_manager.RyuApp):
                         dp.send_msg(req)
 
                     actions = [ofp_parser.OFPActionGroup(group_id)]
-                    print("added flow LP1+ @dp: {} to {}".format(match_ip, match_arp))
+                    print("added flow LP1+ @dp: {} to {} ort: {}".format(match_ip, match_arp, out_ports[0][0]))
                     self.add_flow(dp, 32768, match_ip, actions)
                     self.add_flow(dp, 1, match_arp, actions)
 
                 elif len(out_ports) == 1:
                     actions = [ofp_parser.OFPActionOutput(out_ports[0][0])]
-                    print("added flow LP1 @dp: {} to {}".format(match_ip, match_arp))
+                    print("added flow LP1 @dp: {} to {} Port: {}".format(match_ip, match_arp, out_ports[0][0]))
                     self.add_flow(dp, 32768, match_ip, actions)
                     self.add_flow(dp, 1, match_arp, actions)
         print ("Path installation finished in ", time.time() - computation_start)
