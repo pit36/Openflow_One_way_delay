@@ -676,7 +676,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                             bw = byteDiff / tsDiff
 
                             # save it in map
-                            self.saveInMap(dpidRec, port_no, bw, self.temp_bw_map[dpidRec][port_no]['tsUTC'])
+                            self.saveBwInMap(dpidRec, port_no, bw, self.temp_bw_map[dpidRec][port_no]['tsUTC'])
                             self.temp_bw_map[dpidRec][port_no]['tsUTC'] = time.time()
                         # latencymeasurement
                         oldTime = self.rtt_port_stats_sent[dpidRec]
@@ -864,6 +864,10 @@ class SimpleSwitch13(app_manager.RyuApp):
 
     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
     def _packet_in_handler(self, ev):
+        
+        # directly taking the timestamp when packet arrives
+        timestampRecieve = time.time()
+
         # If you hit this you might want to increase
         # the "miss_send_length" of your switch
         if ev.msg.msg_len < ev.msg.total_len:
@@ -879,11 +883,8 @@ class SimpleSwitch13(app_manager.RyuApp):
         eth = pkt.get_protocols(ethernet.ethernet)[0]
         arp_pkt = pkt.get_protocol(arp.arp)
 
-        #self.logger.info("PACKAGE ARRIVED")
-
         if eth.ethertype == ether_types.ETH_TYPE_LLDP:
             # ignore lldp packet
-        #    self.logger.info("IGNORING LLDP")
             return
         # -------------------
         # avoid broadcast from LLDP
@@ -906,7 +907,7 @@ class SimpleSwitch13(app_manager.RyuApp):
             self.hosts[src] = (dpidRec, in_port)
         out_port = ofproto.OFPP_FLOOD
 
-        # triggered if 4example ping
+        # triggered if 4 example ping
         if arp_pkt:            
             src_ip = arp_pkt.src_ip
             dst_ip = arp_pkt.dst_ip
@@ -924,15 +925,15 @@ class SimpleSwitch13(app_manager.RyuApp):
                     dst_mac = self.arp_table[dst_ip]
                     h1 = self.hosts[src]
                     h2 = self.hosts[dst_mac]
-                    #out_port = self.install_paths(h1[0], h1[1], h2[0], h2[1], src_ip, dst_ip)
-                    #self.install_paths(h2[0], h2[1], h1[0], h1[1], dst_ip, src_ip) # reverse
+                    out_port = self.install_paths(h1[0], h1[1], h2[0], h2[1], src_ip, dst_ip)
+                    self.install_paths(h2[0], h2[1], h1[0], h1[1], dst_ip, src_ip) # reverse
                     print("Its a request")
 
         # -------------------
 
         if (eth.ethertype == 0x07c3):
 
-            timestampRecieve = time.time()
+            
 
             pkt_header_list = pkt[-1].decode("utf-8").split('#')
 
@@ -1035,7 +1036,7 @@ class SimpleSwitch13(app_manager.RyuApp):
     '''
 
     # saving the Bw in Map
-    def saveInMap(self, dpidRec, in_port, bw, ts_before):
+    def saveBwInMap(self, dpidRec, in_port, bw, ts_before):
         for keysDpidSent in self.data_map[dpidRec].keys():
             # matching the portNumber
             if self.data_map[dpidRec][keysDpidSent]['in_port'] == in_port:
@@ -1046,7 +1047,8 @@ class SimpleSwitch13(app_manager.RyuApp):
                 bwObject['value'] = bw / 1024
                 self.data_map[dpidRec][keysDpidSent]['bw'].append(bwObject)
                 break
-
+    
+    # Creation of the measurement packet
     def create_packet(self, dpid):
         pkt = packet.Packet()
         timeNow = datetime.datetime.now()
@@ -1055,24 +1057,24 @@ class SimpleSwitch13(app_manager.RyuApp):
                                            src='00:00:00:00:00:01'))
         wholeData = str(time.time()) + '#' + str(dpid) + '#'
         pkt.add_protocol(bytes(wholeData,"utf-8"))
-
         pkt.serialize()
         return pkt
 
     # ----------------------------#
     # -----routing functions------#
     # ----------------------------#
+    # If switch connection is interrupted
     @set_ev_cls(event.EventSwitchLeave, MAIN_DISPATCHER)
     def switch_leave_handler(self, ev):
         print (ev)
         switch = ev.switch.dp.id
         if switch in self.switches:
             self.logger.info("Switch  {} left".format(switch.id))
-
             self.switches.remove(switch)
             del self.datapath_list[switch]
             del self.adjacency[switch]
 
+    # If new switch is detected by LLDP
     @set_ev_cls(event.EventSwitchEnter)
     def switch_enter_handler(self, ev):
         switch = ev.switch.dp
@@ -1086,6 +1088,7 @@ class SimpleSwitch13(app_manager.RyuApp):
             req = ofp_parser.OFPPortDescStatsRequest(switch)
             switch.send_msg(req)
 
+    # If new link is detected by LLDP
     @set_ev_cls(event.EventLinkAdd, MAIN_DISPATCHER)
     def link_add_handler(self, ev):
         s1 = ev.link.src
@@ -1093,8 +1096,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.adjacency[s1.dpid][s2.dpid] = s1.port_no
         self.adjacency[s2.dpid][s1.dpid] = s2.port_no
 
-    ###########################----------------########################
-    ###########################changed
+    # If link connection is deleted
     @set_ev_cls(event.EventLinkDelete, MAIN_DISPATCHER)
     def link_delete_handler(self, ev):
         s1 = ev.link.src
