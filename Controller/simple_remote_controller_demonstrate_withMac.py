@@ -1005,13 +1005,13 @@ class SimpleSwitch13(app_manager.RyuApp):
             elif arp_pkt.opcode == arp.ARP_REQUEST:
                 if src not in self.hosts:
                     self.hosts[src] = (dpidRec, in_port)
-                if dst_ip in self.arp_table:
+                if dst_ip in self.arp_table and dst in self.hosts:
                     self.arp_table[src_ip] = src
-                    dst_mac = self.arp_table[dst_ip]
+                    dst = self.arp_table[dst_ip]
                     h1 = self.hosts[src]
-                    h2 = self.hosts[dst_mac]
-                    out_port = self.install_paths(h1[0], h1[1], h2[0], h2[1], src_ip, dst_ip)
-                    #self.install_paths(h2[0], h2[1], h1[0], h1[1], dst_ip, src_ip) # reverse
+                    h2 = self.hosts[dst]
+                    #out_port = self.install_paths(h1[0], h1[1], h2[0], h2[1], src_ip, dst_ip)
+                    self.install_paths(h2[0], h2[1], h1[0], h1[1], dst_ip, src_ip) # reverse
                     print("Its a request")
 
         actions = [parser.OFPActionOutput(out_port)]
