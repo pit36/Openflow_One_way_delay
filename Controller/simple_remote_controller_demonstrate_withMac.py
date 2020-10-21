@@ -986,7 +986,8 @@ class SimpleSwitch13(app_manager.RyuApp):
                 return
             else:
                 self.logger.info("ONE ARRIVED EARLIER")
-            out_port = ofproto.OFPP_FLOOD
+        
+        out_port = ofproto.OFPP_FLOOD
 
         # Triggered if 4 example ping
         if arp_pkt:            
