@@ -889,8 +889,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         dst = eth.dst
         src = eth.src
 
-        if src not in self.hosts:
-            self.hosts[src] = (dpidRec, in_port)
+       
 
         if eth.ethertype == ether_types.ETH_TYPE_LLDP:
             # ignore lldp packet
@@ -991,7 +990,9 @@ class SimpleSwitch13(app_manager.RyuApp):
                 return
             else:
                 self.logger.info("ONE ARRIVED EARLIER")
-        
+
+        if src not in self.hosts:
+            self.hosts[src] = (dpidRec, in_port)
         
         out_port = ofproto.OFPP_FLOOD
 
@@ -1000,21 +1001,23 @@ class SimpleSwitch13(app_manager.RyuApp):
             src_ip = arp_pkt.src_ip
             dst_ip = arp_pkt.dst_ip
             if arp_pkt.opcode == arp.ARP_REPLY:
+                print("ARP reply in {} from {} in port: {}".format(dpidRec, src_ip, in_port))
                 self.arp_table[src_ip] = src
                 h1 = self.hosts[src]
-                h2 = self.hosts[dst]
+                h2 = self.hosts[dst]               
                 out_port = self.install_paths(h1[0], h1[1], h2[0], h2[1], src_ip, dst_ip)
                 self.install_paths(h2[0], h2[1], h1[0], h1[1], dst_ip, src_ip) # reverse
-                print("ARP reply in {} from {}".format(dpidRec, src_ip))
+                
             elif arp_pkt.opcode == arp.ARP_REQUEST:
                 if dst_ip in self.arp_table:
+                    print("ARP request in {} from {} in port: {}".format(dpidRec, src_ip, in_port))
                     self.arp_table[src_ip] = src
                     dst_mac = self.arp_table[dst_ip]
                     h1 = self.hosts[src]
                     h2 = self.hosts[dst_mac]
                     out_port = self.install_paths(h1[0], h1[1], h2[0], h2[1], src_ip, dst_ip)
                     self.install_paths(h2[0], h2[1], h1[0], h1[1], dst_ip, src_ip) # reverse
-                    print("ARP request in {} from {}".format(dpidRec, src_ip))
+                    
 
         actions = [parser.OFPActionOutput(out_port)]
         data = None
