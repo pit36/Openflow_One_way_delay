@@ -987,33 +987,29 @@ class SimpleSwitch13(app_manager.RyuApp):
             else:
                 self.logger.info("ONE ARRIVED EARLIER")
         
+        if src not in self.hosts:
+            self.hosts[src] = (dpidRec, in_port)
         out_port = ofproto.OFPP_FLOOD
 
-        # Triggered if 4 example ping
-        if arp_pkt:            
+        if arp_pkt:
+            # print dpid, pkt
             src_ip = arp_pkt.src_ip
             dst_ip = arp_pkt.dst_ip
-            print("getting ARP packet.. Dp: {} Src: {} Dst: {}".format(datapath, src_ip, dst_ip))
             if arp_pkt.opcode == arp.ARP_REPLY:
-                if src not in self.hosts:
-                    self.hosts[src] = (dpidRec, in_port)
                 self.arp_table[src_ip] = src
                 h1 = self.hosts[src]
                 h2 = self.hosts[dst]
                 out_port = self.install_paths(h1[0], h1[1], h2[0], h2[1], src_ip, dst_ip)
                 self.install_paths(h2[0], h2[1], h1[0], h1[1], dst_ip, src_ip) # reverse
-                print("Its a reply")
             elif arp_pkt.opcode == arp.ARP_REQUEST:
-                if src not in self.hosts:
-                    self.hosts[src] = (dpidRec, in_port)
-                if dst_ip in self.arp_table and dst in self.hosts:
+                if dst_ip in self.arp_table:
                     self.arp_table[src_ip] = src
-                    dst = self.arp_table[dst_ip]
+                    dst_mac = self.arp_table[dst_ip]
                     h1 = self.hosts[src]
-                    h2 = self.hosts[dst]
-                    #out_port = self.install_paths(h1[0], h1[1], h2[0], h2[1], src_ip, dst_ip)
+                    h2 = self.hosts[dst_mac]
+                    out_port = self.install_paths(h1[0], h1[1], h2[0], h2[1], src_ip, dst_ip)
                     self.install_paths(h2[0], h2[1], h1[0], h1[1], dst_ip, src_ip) # reverse
-                    print("Its a request")
+
 
         actions = [parser.OFPActionOutput(out_port)]
         data = None
