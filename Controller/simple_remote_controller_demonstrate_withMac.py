@@ -841,11 +841,13 @@ class SimpleSwitch13(app_manager.RyuApp):
         # 128, OVS will send Packet-In with invalid buffer_id and
         # truncated packet data. In that case, we cannot output packets
         # correctly.  The bug has been fixed in OVS v2.1.0.
+        print("Adding controller flow")
         match = parser.OFPMatch()
         actions = [parser.OFPActionOutput(ofproto.OFPP_CONTROLLER,
                                           ofproto.OFPCML_NO_BUFFER)]
         self.add_flow(datapath, 0, match, actions)
 
+    #  datapath, priority, match, actions
     def add_flow(self, datapath, priority, match, actions, buffer_id=None):
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
@@ -907,11 +909,11 @@ class SimpleSwitch13(app_manager.RyuApp):
             self.hosts[src] = (dpidRec, in_port)
         out_port = ofproto.OFPP_FLOOD
 
-        # triggered if 4 example ping
+        # Triggered if 4 example ping
         if arp_pkt:            
             src_ip = arp_pkt.src_ip
             dst_ip = arp_pkt.dst_ip
-            print("getting ARP packet.. Src: {} Dst: {}".format(src_ip, dst_ip))
+            print("getting ARP packet.. Dp: {} Src: {} Dst: {}".format(datapath, src_ip, dst_ip))
             if arp_pkt.opcode == arp.ARP_REPLY:
                 self.arp_table[src_ip] = src
                 h1 = self.hosts[src]
@@ -1280,13 +1282,13 @@ class SimpleSwitch13(app_manager.RyuApp):
                         dp.send_msg(req)
 
                     actions = [ofp_parser.OFPActionGroup(group_id)]
-
+                    print("added flow LP1+ @dp: {} to {}".format(match_ip, match_arp))
                     self.add_flow(dp, 32768, match_ip, actions)
                     self.add_flow(dp, 1, match_arp, actions)
 
                 elif len(out_ports) == 1:
                     actions = [ofp_parser.OFPActionOutput(out_ports[0][0])]
-
+                    print("added flow LP1 @dp: {} to {}".format(match_ip, match_arp))
                     self.add_flow(dp, 32768, match_ip, actions)
                     self.add_flow(dp, 1, match_arp, actions)
         print ("Path installation finished in ", time.time() - computation_start)
@@ -1408,7 +1410,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                     self.logger.info("EXCEPTION Output In between: {}".format(self.output.keys()))
                     self.logger.info("EXCEPTION len1 In between: {}".format(len(self.output[SWITCH_IP_1_inBetween])))
                     self.logger.info("EXCEPTION len2 In between: {}".format(len(self.output[SWITCH_IP_2_inBetween])))
-                    self.logger.info("EXCEPTION Raspberry In between: {}".format(e))
+                    self.logger.info("EXCEPTION Full In between: {}".format(e))
 
             # TODO: kick out socket
             #while self.socketReady[SWITCH_IP_1] == False or self.socketReady[SWITCH_IP_2] == False:
