@@ -60,12 +60,12 @@ MININET = False
 # IPERF = Increasing Bandwith
 # RTT = RTT Measurement
 # CHANGINGLAT = latency changes
-# CHANGINGLATCONTROLLER = latency changes
+# CHANGINGLATCONTROLLER = latency changes controller
 # CHANGINGLATTOSHOWDIFFERENCE = stairs up
 # ONELONGTIME = one latency measurement
 
 # IMPORTANT: While measurement, RTT is useless because only every second value is taken
-TESTTYPE = 'Normal'
+TESTTYPE = 'CHANGINGLATCONTROLLER'
 
 # ALL -> statisticrequest, echo + echoboth
 # RTT -> statisticreq
