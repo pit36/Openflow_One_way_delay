@@ -999,7 +999,9 @@ class SimpleSwitch13(app_manager.RyuApp):
         buol = True
         if src not in self.hosts:
             for host in self.hosts:
+                print("hosts: {}".format(host))
                 dpid = host[0]
+                print("dpid: {} = dpidRec: {}".format(dpid, dpidRec))
                 if dpid == dpidRec:
                     buol=False
             if buol:
