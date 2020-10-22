@@ -998,7 +998,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                 self.logger.info("ONE ARRIVED EARLIER")
         buol = True
         if src not in self.hosts:
-            for host in hosts:
+            for host in self.hosts:
                 dpid = host[0]
                 if dpid == dpidRec:
                     boul=False
