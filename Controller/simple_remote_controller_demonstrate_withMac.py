@@ -1468,44 +1468,44 @@ class SimpleSwitch13(app_manager.RyuApp):
             
             if TESTTYPE == 'CHANGINGLAT' or TESTTYPE == 'CHANGINGLATTOSHOWDIFFERENCE' or TESTTYPE == 'ONELONGTIME' or TESTTYPE == 'CHANGINGLATCONTROLLER':
                 try:
-                    with open('data/{}/output_changingLat_1.txt'.format(timeStampStr), 'w') as the_file9:
+                    with open('data/{}/output_changingLat_1.json'.format(timeStampStr), 'w') as the_file9:
                         the_file9.write(json.dumps(self.changingLatMap[SWITCH_IP_1_2]))
-                    with open('data/{}/output_changingLat_2.txt'.format(timeStampStr), 'w') as the_file10:
+                    with open('data/{}/output_changingLat_2.json'.format(timeStampStr), 'w') as the_file10:
                         the_file10.write(json.dumps(self.changingLatMap[SWITCH_IP_2_2]))
                 except Exception as e:
                     self.logger.info("EXCEPTION Socket: {}".format(e))
 
             if(TESTTYPE == 'IPERF' and len(list(self.backlog.keys()))>0):
                 try:
-                    with open('data/{}/output_backlog_1.txt'.format(timeStampStr), 'w') as the_fileab1:
+                    with open('data/{}/output_backlog_1.json'.format(timeStampStr), 'w') as the_fileab1:
                         the_fileab1.write(json.dumps(self.backlog[SWITCH_IP_1_2]))
-                    with open('data/{}/output_backlog_2.txt'.format(timeStampStr), 'w') as the_fileab2:
+                    with open('data/{}/output_backlog_2.json'.format(timeStampStr), 'w') as the_fileab2:
                         the_fileab2.write(json.dumps(self.backlog[SWITCH_IP_2_2]))
                 except Exception as e:
                     self.logger.info("EXCEPTION Backlock: {}".format(e))
                 try:
-                    with open('data/{}/output_dropped_1.txt'.format(timeStampStr), 'w') as the_fileabc1:
+                    with open('data/{}/output_dropped_1.json'.format(timeStampStr), 'w') as the_fileabc1:
                         the_fileabc1.write(json.dumps(self.packets_drop[SWITCH_IP_1_2]))
-                    with open('data/{}/output_dropped_2.txt'.format(timeStampStr), 'w') as the_fileabc2:
+                    with open('data/{}/output_dropped_2.json'.format(timeStampStr), 'w') as the_fileabc2:
                         the_fileabc2.write(json.dumps(self.packets_drop[SWITCH_IP_2_2]))
                 except Exception as e:
                     self.logger.info("EXCEPTION dropped: {}".format(e))
 
             # RTTs
             if (MEASUREMENTTYPE == 'RTT' or MEASUREMENTTYPE == 'ALL' ):
-                with open('data/{}/RTT.txt'.format(timeStampStr), 'w') as the_file11:
+                with open('data/{}/RTT.json'.format(timeStampStr), 'w') as the_file11:
                     the_file11.write(json.dumps(self.saved_rtt_to_dpid))
             if(MEASUREMENTTYPE == 'ECHO' or MEASUREMENTTYPE == 'ALL'):
-                with open('data/{}/RTT_Echo.txt'.format(timeStampStr), 'w') as the_file12:
+                with open('data/{}/RTT_Echo.json'.format(timeStampStr), 'w') as the_file12:
                     the_file12.write(json.dumps(self.saved_echo_rtt_to_dpid))
 
-                with open('data/{}/Sw2Con.txt'.format(timeStampStr), 'w') as the_file13:
+                with open('data/{}/Sw2Con.json'.format(timeStampStr), 'w') as the_file13:
                     the_file13.write(json.dumps(self.saved_echo_timeToSw))
 
-                with open('data/{}/Con2Sw.txt'.format(timeStampStr), 'w') as the_file14:
+                with open('data/{}/Con2Sw.json'.format(timeStampStr), 'w') as the_file14:
                     the_file14.write(json.dumps(self.saved_echo_timeToC))
             if(MEASUREMENTTYPE == 'PORTSTATS' or MEASUREMENTTYPE == 'ALL' ):
-                with open('data/{}/Port_Stats.txt'.format(timeStampStr), 'w') as the_file15:
+                with open('data/{}/Port_Stats.json'.format(timeStampStr), 'w') as the_file15:
                     the_file15.write(json.dumps(self.saved_rtt_to_dpid_portStats))
 
         print("Finished printing plot data")

@@ -2,7 +2,7 @@ import plotting
 import json
 
 ################## getting data ##################################
-path = "data/10_22_2020_17_47_Normal_ECHORTT/"
+path = "data/10_22_2020_17_57_Normal_ECHO/"
 mininet = False
 pingdata1 = {}
 pingdata2 = {}
@@ -78,7 +78,7 @@ if ('ECHO' in path and 'RTT' not in path) or 'ALL' in path:
         saved_echo_rtt_to_dpid = json.load(f11)
         # print(saved_echo_rtt_to_dpid)
     f11.close()
-    with open(path + "Sw2Con.txt", "r") as f12:
+    with open(path + "Sw2Con.json", "r") as f12:
         saved_echo_timeToSw = json.load(f12)
         # print(saved_echo_timeToSw)
     f12.close()
