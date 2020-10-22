@@ -141,7 +141,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.datapath_list = {}
         self.arp_table = {}
         self.switches = [] #1
-        self.hosts = {}#{'90:1b:0e:cb:8d:94': (158445886737823, 4294967294), '90:1b:0e:cb:8d:9f': (158445886737812, 4294967294)}
+        self.hosts = {} #{'90:1b:0e:cb:8d:94': (158445886737823, 4294967294), '90:1b:0e:cb:8d:9f': (158445886737812, 4294967294)}
         self.multipath_group_ids = {}
         self.group_ids = []
         self.adjacency = defaultdict(dict)
@@ -513,9 +513,15 @@ class SimpleSwitch13(app_manager.RyuApp):
                 print("Passed test ssh host: {} to: {}".format(hostIP, clientIP))
                 break
             time.sleep(0.1)
-        
-        command = 'sudo ping {} -D -c {} -i 0.5 | head -n -3 | grep -E "[0-9]+\.?[0-9]+ ms" | grep -o -E "\[[0-9]+\.[0-9]+\]|[0-9]+\.?[0-9]+ ms" | grep -o -E "[0-9]+\.?[0-9]+"'.format(clientIP, pingtime)
 
+        # send one ping
+        commandFirst = 'sudo ping {} -D -c {}'.format(clientIP, 1)
+        stdin, stdout, stderr = ssh.exec_command(commandFirst)
+
+        time.sleep(1)
+        #command = 'sudo ping {} -D -c {} -i 0.5 | head -n -3 | grep -E "[0-9]+\.?[0-9]+ ms" | grep -o -E "\[[0-9]+\.[0-9]+\]|[0-9]+\.?[0-9]+ ms" | grep -o -E "[0-9]+\.?[0-9]+"'.format(clientIP, pingtime)
+        command = "ls"
+        
         timebefore = time.time()
         stdin, stdout, stderr = ssh.exec_command(command)
 
