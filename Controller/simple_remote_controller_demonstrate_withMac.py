@@ -1001,8 +1001,8 @@ class SimpleSwitch13(app_manager.RyuApp):
             for host in self.hosts:
                 dpid = host[0]
                 if dpid == dpidRec:
-                    boul=False
-            if boul:
+                    buol=False
+            if buol:
                 self.hosts[src] = (dpidRec, in_port)
         
         out_port = ofproto.OFPP_FLOOD
