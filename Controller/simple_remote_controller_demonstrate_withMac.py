@@ -521,7 +521,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         time.sleep(1)
         #command = 'sudo ping {} -D -c {} -i 0.5 | head -n -3 | grep -E "[0-9]+\.?[0-9]+ ms" | grep -o -E "\[[0-9]+\.[0-9]+\]|[0-9]+\.?[0-9]+ ms" | grep -o -E "[0-9]+\.?[0-9]+"'.format(clientIP, pingtime)
         command = "ls"
-        
+
         timebefore = time.time()
         stdin, stdout, stderr = ssh.exec_command(command)
 
@@ -996,9 +996,14 @@ class SimpleSwitch13(app_manager.RyuApp):
                 return
             else:
                 self.logger.info("ONE ARRIVED EARLIER")
-
+        buol = True
         if src not in self.hosts:
-            self.hosts[src] = (dpidRec, in_port)
+            for host in hosts:
+                dpid = host[0]
+                if dpid == dpidRec:
+                    boul=False
+            if boul:
+                self.hosts[src] = (dpidRec, in_port)
         
         out_port = ofproto.OFPP_FLOOD
 
