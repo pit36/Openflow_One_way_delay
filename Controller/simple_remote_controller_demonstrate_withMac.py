@@ -1006,7 +1006,9 @@ class SimpleSwitch13(app_manager.RyuApp):
                     buol=False
             if buol:
                 self.hosts[src] = (dpidRec, in_port)
+
         
+
         out_port = ofproto.OFPP_FLOOD
 
         if arp_pkt:
@@ -1019,7 +1021,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                 h1 = self.hosts[src]
                 h2 = self.hosts[dst]               
                 out_port = self.install_paths(h1[0], h1[1], h2[0], h2[1], src_ip, dst_ip)
-                self.install_paths(h2[0], h2[1], h1[0], h1[1], dst_ip, src_ip) # reverse
+                #self.install_paths(h2[0], h2[1], h1[0], h1[1], dst_ip, src_ip) # reverse
                 
             elif arp_pkt.opcode == arp.ARP_REQUEST:
                 if dst_ip in self.arp_table:
@@ -1028,8 +1030,8 @@ class SimpleSwitch13(app_manager.RyuApp):
                     dst_mac = self.arp_table[dst_ip]
                     h1 = self.hosts[src]
                     h2 = self.hosts[dst_mac]
-                    out_port = self.install_paths(h1[0], h1[1], h2[0], h2[1], src_ip, dst_ip)
-                    self.install_paths(h2[0], h2[1], h1[0], h1[1], dst_ip, src_ip) # reverse
+                    #out_port = self.install_paths(h1[0], h1[1], h2[0], h2[1], src_ip, dst_ip)
+                    #self.install_paths(h2[0], h2[1], h1[0], h1[1], dst_ip, src_ip) # reverse
                     
 
         actions = [parser.OFPActionOutput(out_port)]
@@ -1105,6 +1107,27 @@ class SimpleSwitch13(app_manager.RyuApp):
             # Request port/link descriptions, useful for obtaining bandwidth
             req = ofp_parser.OFPPortDescStatsRequest(switch)
             switch.send_msg(req)
+        if len(switches)>1:
+            #static route add   src, first_port, dst, last_port, ip_src, ip_dst
+            out_port_eth = 1
+            out_port_host = 4294967294
+            actions_eth = [ofp_parser.OFPActionOutput(out_port_eth)]
+            actions_host = [ofp_parser.OFPActionOutput(out_port_host)]
+            dp_1 = self.datapath_list[158445886737823] 
+            dp_2 = self.datapath_list[158445886737812] 
+            type_ip = 'ipv4'
+            type_arp = 'arp'
+            print( "!!!!!!!!!!!!!!!!!!ADDING FLOWS!!!!!!!!!!!!!!!!!!!!!")
+            # 2x eth           
+            self.add_flow(dp_1, self.get_priority(type_ip), self.get_match(type_ip, ofp_parser, '10.0.0.1', '10.0.0.2'), actions_eth)
+            self.add_flow(dp_2, self.get_priority(type_ip), self.get_match(type_ip, ofp_parser, '10.0.0.2', '10.0.0.1'), actions_eth)
+            self.add_flow(dp_1, self.get_priority(type_arp), self.get_match(type_arp, ofp_parser, '10.0.0.1', '10.0.0.2'), actions_eth)
+            self.add_flow(dp_2, self.get_priority(type_arp), self.get_match(type_arp, ofp_parser, '10.0.0.2', '10.0.0.1'), actions_eth)
+            # 2x host
+            self.add_flow(dp_1, self.get_priority(type_ip), self.get_match(type_ip, ofp_parser, '10.0.0.2', '10.0.0.1'), actions_host)
+            self.add_flow(dp_2, self.get_priority(type_ip), self.get_match(type_ip, ofp_parser, '10.0.0.1', '10.0.0.2'), actions_host)
+            self.add_flow(dp_1, self.get_priority(type_arp), self.get_match(type_arp, ofp_parser, '10.0.0.2', '10.0.0.1'), actions_host)
+            self.add_flow(dp_2, self.get_priority(type_arp), self.get_match(type_arp, ofp_parser, '10.0.0.1', '10.0.0.2'), actions_host)
 
     # If new link is detected by LLDP
     @set_ev_cls(event.EventLinkAdd, MAIN_DISPATCHER)
@@ -1535,3 +1558,49 @@ class SimpleSwitch13(app_manager.RyuApp):
 
         s.close()  # Close the socket when done
         self.socketReady[host] = True
+
+        def install_path(self, controller, chosenPath, first_port, last_port, ip_src, ip_dst, type):
+
+            path = self.add_ports_to_path(controller, chosenPath, first_port, last_port)
+            #switches_in_paths = set().union(*chosenPath)
+
+            for node in chosenPath:
+                dp = controller.dpidToDatapath[node]
+                ofp = dp.ofproto
+                ofp_parser = dp.ofproto_parser
+                ports = defaultdict(list)
+                actions = []
+
+                if node in path:
+                    in_port = path[node][0]
+                    out_port = path[node][1]
+                    if out_port not in ports[in_port]:
+                        ports[in_port].append(out_port)
+
+                for in_port in ports:
+                    out_ports = ports[in_port]
+                    actions = [ofp_parser.OFPActionOutput(out_ports[0])]
+                    controller.add_flow(dp, self.get_priority(type), self.get_match(type, ofp_parser, ip_src, ip_dst), actions)
+
+    def get_match(self, type, ofp_parser, ip_src, ip_dst):
+        if type == 'ipv4':
+            match_ip = ofp_parser.OFPMatch(
+                eth_type=0x0800,
+                ipv4_src=ip_src,
+                ipv4_dst=ip_dst
+            )
+            return match_ip
+        if type == 'arp':
+            match_arp = ofp_parser.OFPMatch(
+                eth_type=0x0806,
+                arp_spa=ip_src,
+                arp_tpa=ip_dst
+            )
+            return match_arp
+
+    def get_priority(self, type):
+        if type == 'ipv4':
+            return 1
+        if type == 'arp':
+            return 32768
+        return 32768
