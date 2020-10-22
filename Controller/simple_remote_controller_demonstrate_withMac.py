@@ -1020,7 +1020,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                 self.arp_table[src_ip] = src
                 h1 = self.hosts[src]
                 h2 = self.hosts[dst]               
-                out_port = self.install_paths(h1[0], h1[1], h2[0], h2[1], src_ip, dst_ip)
+                #out_port = self.install_paths(h1[0], h1[1], h2[0], h2[1], src_ip, dst_ip)
                 #self.install_paths(h2[0], h2[1], h1[0], h1[1], dst_ip, src_ip) # reverse
                 
             elif arp_pkt.opcode == arp.ARP_REQUEST:
@@ -1107,7 +1107,7 @@ class SimpleSwitch13(app_manager.RyuApp):
             # Request port/link descriptions, useful for obtaining bandwidth
             req = ofp_parser.OFPPortDescStatsRequest(switch)
             switch.send_msg(req)
-        if len(switches)>1:
+        if len(self.switches)>1:
             #static route add   src, first_port, dst, last_port, ip_src, ip_dst
             out_port_eth = 1
             out_port_host = 4294967294
