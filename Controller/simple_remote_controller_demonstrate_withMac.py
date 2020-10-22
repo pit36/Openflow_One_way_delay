@@ -515,12 +515,11 @@ class SimpleSwitch13(app_manager.RyuApp):
             time.sleep(0.1)
 
         # send one ping
-        commandFirst = 'sudo ping {} -D -c {}'.format(clientIP, 1)
-        stdin, stdout, stderr = ssh.exec_command(commandFirst)
+        #commandFirst = 'sudo ping {} -D -c {}'.format(clientIP, 1)
+        #stdin, stdout, stderr = ssh.exec_command(commandFirst)
 
         time.sleep(1)
-        #command = 'sudo ping {} -D -c {} -i 0.5 | head -n -3 | grep -E "[0-9]+\.?[0-9]+ ms" | grep -o -E "\[[0-9]+\.[0-9]+\]|[0-9]+\.?[0-9]+ ms" | grep -o -E "[0-9]+\.?[0-9]+"'.format(clientIP, pingtime)
-        command = "ls"
+        command = 'sudo ping {} -D -c {} -i 0.5 | head -n -3 | grep -E "[0-9]+\.?[0-9]+ ms" | grep -o -E "\[[0-9]+\.[0-9]+\]|[0-9]+\.?[0-9]+ ms" | grep -o -E "[0-9]+\.?[0-9]+"'.format(clientIP, pingtime)
 
         timebefore = time.time()
         stdin, stdout, stderr = ssh.exec_command(command)
