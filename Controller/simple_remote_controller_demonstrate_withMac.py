@@ -730,7 +730,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         dpid = ev.msg.datapath.id
         # getting timestamp
         timeStampF = float(int(binascii.hexlify(timeStamp_enc), 16))
-
+        
         # calculating the values
         timeStampT = timeStampF/10e8
 
@@ -763,7 +763,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         echoTimeToSwElement[currentTime] = timeSwToC
         echoTimeToCElement = {}
         echoTimeToCElement[currentTime] = wholeTime - timeSwToC
-
+        print("TIMESTAMP ECHO: {} RTT: {} CtrlToSw: {} SwToCtrl: {}".format(timeStampF, echoRTTElement, echoTimeToSwElement, echoTimeToCElement))
         self.saved_echo_rtt_to_dpid[dpid].append(echoRTTElement)
         self.saved_echo_timeToSw[dpid].append(echoTimeToSwElement)
         self.saved_echo_timeToC[dpid].append(echoTimeToCElement)
@@ -1514,7 +1514,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                 with open('data/{}/Port_Stats.json'.format(timeStampStr), 'w') as the_file15:
                     the_file15.write(json.dumps(self.saved_rtt_to_dpid_portStats))
 
-        print("Finished printing plot data")
+        print("Finished saving plot data")
         self.allreadyPlotted = True
 
 # Kick out
