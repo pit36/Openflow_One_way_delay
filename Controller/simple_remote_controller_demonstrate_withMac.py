@@ -42,8 +42,14 @@ SWITCH_IP_2 = '172.31.1.102'
 SWITCH_IP_1_2 = '10.0.1.2'
 SWITCH_IP_2_2 = '10.0.2.2'
 
-INTERFACE_1 = 'eth0'#'enxa0cec81d1262'
-INTERFACE_2 = 'eth1'#'enxa0cec8200aaa'
+INTERFACE_CONTROLLER_TO_SWITCH_1 = 'eth0'#'enxa0cec81d1262'
+INTERFACE_CONTROLLER_TO_SWITCH_2 = 'eth1'#'enxa0cec8200aaa'
+
+INTERFACE_SWITCH_1_TO_CONTROLLER = 'eth2'
+INTERFACE_SWITCH_2_TO_CONTROLLER = 'eth2'
+
+INTERFACE_SWITCH_1_TO_SWITCH_2 = 'eth0'
+INTERFACE_SWITCH_2_TO_SWITCH_1 = 'eth0'
 
 # IP for the OpenVSwitches in between, IPs of the swithces
 SWITCH_IP_1_inBetween = '10.0.0.1'
@@ -166,8 +172,8 @@ class SimpleSwitch13(app_manager.RyuApp):
 
         if(TESTTYPE == 'IPERF'):
             self.monitor_queues()
-            self.changeLatency(SWITCH_IP_1_2, 'eth0', 0.001, 3000)
-            self.changeLatency(SWITCH_IP_2_2, 'eth0', 0.001, 3000)
+            self.changeLatency(SWITCH_IP_1_2, INTERFACE_SWITCH_1_TO_SWITCH_2, 0.001, 3000)
+            self.changeLatency(SWITCH_IP_2_2, INTERFACE_SWITCH_2_TO_SWITCH_1, 0.001, 3000)
 
         # iperf
         self.iperfAlready = False
@@ -213,8 +219,8 @@ class SimpleSwitch13(app_manager.RyuApp):
         if (TESTTYPE == 'CHANGINGLATCONTROLLER'):
             latencyValue1 = 40.0
             latencyValue2 = 40.0
-            self.changeLatency(SWITCH_IP_1_2, 'eth0', latencyValue1)
-            self.changeLatency(SWITCH_IP_2_2, 'eth0', latencyValue2)
+            self.changeLatency(SWITCH_IP_1_2, INTERFACE_SWITCH_1_TO_CONTROLLER, latencyValue1)
+            self.changeLatency(SWITCH_IP_2_2, INTERFACE_SWITCH_2_TO_CONTROLLER, latencyValue2)
             if (SWITCH_IP_1_2 not in self.changingLatMap.keys()):
                 self.changingLatMap[SWITCH_IP_1_2] = []
                 self.changingLatMap[SWITCH_IP_2_2] = []
@@ -228,15 +234,15 @@ class SimpleSwitch13(app_manager.RyuApp):
             self.changingLatMap[SWITCH_IP_2_2].append(latencyChangingElement2)
 
         if(TESTTYPE == 'CHANGINGLATTOSHOWDIFFERENCE'):
-            self.changeLatency(SWITCH_IP_2_2, 'eth0', 0.0)
+            self.changeLatency(SWITCH_IP_2_2, INTERFACE_SWITCH_2_TO_SWITCH_1, 0.0)
 
         if(TESTTYPE == 'ONELONGTIME'):
             pass
-            self.changeLatency(SWITCH_IP_2_2, 'eth0', 0.0)
+            self.changeLatency(SWITCH_IP_2_2, INTERFACE_SWITCH_2_TO_SWITCH_1, 0.0)
             # 0 10 30 50 70 90
             latencyValue1 = 0.0
             latencyValue2 = 0.0
-            self.changeLatency(SWITCH_IP_1_2, 'eth0', latencyValue1)
+            self.changeLatency(SWITCH_IP_1_2, INTERFACE_SWITCH_1_TO_SWITCH_2, latencyValue1)
             if (SWITCH_IP_1_2 not in self.changingLatMap.keys()):
                 self.changingLatMap[SWITCH_IP_1_2] = []
                 self.changingLatMap[SWITCH_IP_2_2] = []
@@ -269,7 +275,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                 # in 10 sec steps
                 if self.changeit < time.time() - self.startingTime and self.changeit+10.0 > time.time() - self.startingTime:
                     latencyValue1 = self.changeit
-                    self.changeLatency(SWITCH_IP_1_2, 'eth0', latencyValue1)
+                    self.changeLatency(SWITCH_IP_1_2, INTERFACE_SWITCH_1_TO_SWITCH_2, latencyValue1)
                     if (SWITCH_IP_1_2 not in self.changingLatMap.keys()):
                         self.changingLatMap[SWITCH_IP_1_2] = []
                         self.changingLatMap[SWITCH_IP_2_2] = []
@@ -290,8 +296,8 @@ class SimpleSwitch13(app_manager.RyuApp):
                         #float(self.timestepsize) *10.0 + 10.0
                     latencyValue2 = '60'
                         #float(self.timestepsize) * 10.0 + 20.0
-                    self.changeLatency(SWITCH_IP_1_2,'eth0', latencyValue1)
-                    self.changeLatency(SWITCH_IP_2_2,'eth0', latencyValue2)
+                    self.changeLatency(SWITCH_IP_1_2,INTERFACE_SWITCH_1_TO_SWITCH_2, latencyValue1)
+                    self.changeLatency(SWITCH_IP_2_2,INTERFACE_SWITCH_2_TO_SWITCH_1, latencyValue2)
                     if(SWITCH_IP_1_2 not in self.changingLatMap.keys()):
                         self.changingLatMap[SWITCH_IP_1_2] = []
                         self.changingLatMap[SWITCH_IP_2_2] = []
@@ -312,14 +318,14 @@ class SimpleSwitch13(app_manager.RyuApp):
                 #if self.enamurationNumber*self.timestepsize > time.time() - self.startingTime:
                     latencyValue1 = '20'
                     latencyValue2 = '40'
-                    self.changeLatency(SWITCH_IP_1_2,'eth1', latencyValue1)
+                    self.changeLatency(SWITCH_IP_1_2, INTERFACE_SWITCH_1_TO_CONTROLLER, latencyValue1)
                     # self.changeLatency(SWITCH_IP_2_2,'eth0', latencyValue2)
 
                     if(SWITCH_IP_1_2 not in self.changingLatMap.keys()):
                         self.changingLatMap[SWITCH_IP_1_2] = []
                         self.changingLatMap[SWITCH_IP_2_2] = []
 
-                    command = 'sudo tc qdisc change dev enxa0cec81d1262 root netem delay {}ms'.format(latencyValue2)
+                    command = 'sudo tc qdisc change dev {} root netem delay {}ms'.format(INTERFACE_CONTROLLER_TO_SWITCH_1, latencyValue2)
                     nads = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE).communicate()
                     self.logger.info("!!!!!!!!!!!!!!!!!!!!!!!LATENCYVALUECHANGED AT: {}  !!!!!!!!!!!!".format(time.time()-self.startingTime))
                     latencyChangingElement1 = {}
@@ -340,8 +346,8 @@ class SimpleSwitch13(app_manager.RyuApp):
                     # float(self.timestepsize) *10.0 + 10.0
                     latencyValue2 = '60'
                     # float(self.timestepsize) * 10.0 + 20.0
-                    self.changeLatency(SWITCH_IP_1_2, 'eth0', latencyValue1)
-                    self.changeLatency(SWITCH_IP_2_2, 'eth0', latencyValue2)
+                    self.changeLatency(SWITCH_IP_1_2, INTERFACE_SWITCH_1_TO_SWITCH_2, latencyValue1)
+                    self.changeLatency(SWITCH_IP_2_2, INTERFACE_SWITCH_2_TO_SWITCH_1, latencyValue2)
                     if (SWITCH_IP_1_2 not in self.changingLatMap.keys()):
                         self.changingLatMap[SWITCH_IP_1_2] = []
                         self.changingLatMap[SWITCH_IP_2_2] = []
@@ -363,8 +369,8 @@ class SimpleSwitch13(app_manager.RyuApp):
                 # float(self.timestepsize) *10.0 + 10.0
                 latencyValue2 = '20'
                 # float(self.timestepsize) * 10.0 + 20.0
-                self.changeLatency(SWITCH_IP_1_2, 'eth0', latencyValue1)
-                self.changeLatency(SWITCH_IP_2_2, 'eth0', latencyValue2)
+                self.changeLatency(SWITCH_IP_1_2, INTERFACE_SWITCH_1_TO_SWITCH_2, latencyValue1)
+                self.changeLatency(SWITCH_IP_2_2, INTERFACE_SWITCH_2_TO_SWITCH_1, latencyValue2)
                 if (SWITCH_IP_1_2 not in self.changingLatMap.keys()):
                     self.changingLatMap[SWITCH_IP_1_2] = []
                     self.changingLatMap[SWITCH_IP_2_2] = []

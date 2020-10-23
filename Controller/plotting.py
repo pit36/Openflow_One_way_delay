@@ -712,6 +712,7 @@ def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2,
     # get Echo RTT values
     getxyArrayLatency(xArrayEchoRtt1, yArrayEchoRtt1, dataMap[key1][key2]['latencyEchoRTT'], timeTillStart)
     getxyArrayLatency(xArrayEchoRtt2, yArrayEchoRtt2, dataMap[key2][key1]['latencyEchoRTT'], timeTillStart)
+    print("EchoRTT {}".format(yArrayEchoRtt1))
     # plot Echo RTT values
     ax11.plot(xArrayEchoRtt1, yArrayEchoRtt1 , color='r', label=r'Derived from Controller - Switch RTT')
     ax21.plot(xArrayEchoRtt2, yArrayEchoRtt2, color='g', label='L_{S2} Derived from RTT')
