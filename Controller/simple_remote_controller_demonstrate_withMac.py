@@ -327,7 +327,8 @@ class SimpleSwitch13(app_manager.RyuApp):
 
                     command = 'sudo tc qdisc change dev {} root netem delay {}ms'.format(INTERFACE_CONTROLLER_TO_SWITCH_1, latencyValue2)
                     nads = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE).communicate()
-                    self.logger.info("!!!!!!!!!!!!!!!!!!!!!!!LATENCYVALUECHANGED AT: {}  !!!!!!!!!!!!".format(time.time()-self.startingTime))
+                    self.logger.info("!!!!!!!!!!!!!!!!!!!!!!!LATENCYVALUECHANGED AT: {}  !!!!!!!!!!!! Output: {}".format(time.time()-self.startingTime, nads))
+
                     latencyChangingElement1 = {}
                     latencyChangingElement2 = {}
                     latencyChangingElement1['timestamp'] = time.time()
@@ -493,8 +494,28 @@ class SimpleSwitch13(app_manager.RyuApp):
         command = 'sudo tc qdisc change dev {} root netem delay {}ms limit {}'.format(socketChanging, value, limit)
         self.logger.info('LatencyChangingCmd : {}'.format(command))
         stdin, stdout, stderr = ssh.exec_command(command)
-        output = stdout.readlines()
-        print("response: {}".format(output))
+        data = stdout.readlines()
+        dataErr = stderr.readlines()
+        while True:
+            # waiting for response
+            if len(data) > 0 or len(dataErr) > 0:
+                break
+            data = stdout.readlines()
+            dataErr = stderr.readlines()
+            time.sleep(0.1)
+        if dataErr > 0:
+                print("Response Error: {}".format(data))
+                command = 'sudo tc qdisc add dev {} root netem delay {}ms limit {}'.format(socketChanging, value, limit)
+                stdin2, stdout2, stderr2 = ssh.exec_command(command)
+                while True:
+            # waiting for response
+                        data2 = stdout2.readlines()
+                        dataErr2 = stderr2.readlines()
+                        if len(data2) > 0 or len(dataErr2) > 0:
+                            print("Responsed to error:  Good: {} Still Error{}".format(data2, dataErr2))
+                            time.sleep(0.1)
+        else:
+            print("Response: {}".format(data))
         ssh.close()
 
     def monitor_pingConnectionbetweenswitches(self, hostIP, clientIP):
@@ -1122,7 +1143,7 @@ class SimpleSwitch13(app_manager.RyuApp):
             dp_2 = self.datapath_list[158445886737812] 
             type_ip = 'ipv4'
             type_arp = 'arp'
-            print( "!!!!!!!!!!!!!!!!!!ADDING FLOWS!!!!!!!!!!!!!!!!!!!!!")
+            #print( "!!!!!!!!!!!!!!!!!!ADDING FLOWS!!!!!!!!!!!!!!!!!!!!!")
             # 2x eth           
             self.add_flow(dp_1, self.get_priority(type_ip), self.get_match(type_ip, ofp_parser, '10.0.0.1', '10.0.0.2'), actions_eth)
             self.add_flow(dp_2, self.get_priority(type_ip), self.get_match(type_ip, ofp_parser, '10.0.0.2', '10.0.0.1'), actions_eth)
