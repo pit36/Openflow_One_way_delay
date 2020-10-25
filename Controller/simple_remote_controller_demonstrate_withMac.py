@@ -784,7 +784,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         echoTimeToSwElement[currentTime] = timeSwToC
         echoTimeToCElement = {}
         echoTimeToCElement[currentTime] = wholeTime - timeSwToC
-        print("TIMESTAMP ECHO: {} RTT: {} CtrlToSw: {} SwToCtrl: {}".format(timeStampF, echoRTTElement, echoTimeToSwElement, echoTimeToCElement))
+        #print("TIMESTAMP ECHO: {} RTT: {} CtrlToSw: {} SwToCtrl: {}".format(timeStampF, echoRTTElement, echoTimeToSwElement, echoTimeToCElement))
         self.saved_echo_rtt_to_dpid[dpid].append(echoRTTElement)
         self.saved_echo_timeToSw[dpid].append(echoTimeToSwElement)
         self.saved_echo_timeToC[dpid].append(echoTimeToCElement)
