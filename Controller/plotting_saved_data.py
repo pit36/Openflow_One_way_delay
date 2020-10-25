@@ -2,7 +2,7 @@ import plotting
 import json
 
 ################## getting data ##################################
-path = "data/10_23_2020_16_52_CHANGINGLATCONTROLLER_ECHO/"
+path = "data/10_25_2020_15_05_CHANGINGLATCONTROLLER_ECHO/"
 mininet = False
 pingdata1 = {}
 pingdata2 = {}
@@ -148,7 +148,7 @@ plotting.plotLatencyChangeCONTROLLERRaspi(datamap,startingtime,pingdata_inbetwee
 #plotting.plotRTTCompMininet(datamap, startingtime, saved_rtt_to_dpid, saved_echo_rtt_to_dpid, pingdata1, pingdata2)
 
 # NORMAL!:
-plotting.plotLatComp(datamap, startingtime, pingdata_inbetween1, pingdata_inbetween2)
+#plotting.plotLatComp(datamap, startingtime, pingdata_inbetween1, pingdata_inbetween2)
 #plotting.plotLatCompMininet(datamap, startingtime, path)
 
 #plotting.getAdjMatrix(datamap)

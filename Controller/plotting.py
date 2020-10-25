@@ -30,7 +30,6 @@ def getxyArrayLatency2(xArray, yArray, dataLatency, timeTillStart):
 def getxyArrayLatencyNoTs(xArray, yArray, dataLatency, timeTillStart, divide=False):
     #print('datalat: {}'.format(dataLatency))
     for i in dataLatency:
-        print(i)
         x = list(i.keys())[0]
         xdiff = float(x)-timeTillStart
         if (xdiff > 0):
@@ -728,7 +727,7 @@ def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2,
     # plot Echo values
     ax11.plot(xArrayEcho1, yArrayEcho1, color='g', label='Asymmetry Detection')
     ax21.plot(xArrayEcho2, yArrayEcho2, '--', color='r', label='Asymmetry Detection')
-
+    print("Echo {}".format(yArrayEcho1))
     # get ping values
     xArrayPing1 = []
     yArrayPing1 = []
@@ -756,6 +755,7 @@ def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2,
     yArrayEcho2 = []
     getxyArrayLatencyNoTs(xArrayEcho1, yArrayEcho1, saved_echo_rtt_to_dpid[key1], timeTillStart, True)
     getxyArrayLatencyNoTs(xArrayEcho2, yArrayEcho2, saved_echo_rtt_to_dpid[key2], timeTillStart, True)
+    print("EchoRTT Values: {}".format(yArrayEcho1))
     ax12.plot(xArrayEcho1, yArrayEcho1, 'r', label='Derived from RTT Controller - Switch 2')
     ax22.plot(xArrayEcho2, yArrayEcho2, 'r', label='Derived from')
 
@@ -766,6 +766,7 @@ def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2,
     yArray2C2 = []
     getxyArrayLatencyNoTs(xArray2C1, yArray2C1, Sw2Con[key1], timeTillStart)
     getxyArrayLatencyNoTs(xArray2C2, yArray2C2, Sw2Con[key2], timeTillStart)
+    print("Sw2C Values: {}".format(yArray2C1))
     ax12.plot(xArray2C1, yArray2C1, 'y', label='Switch 2 to Controller')
     ax22.plot(xArray2C2, yArray2C2, 'y', label='Switch to Controller')
 
@@ -776,6 +777,7 @@ def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2,
     yArrayPing2a = []
     getPingValues(xArrayPing1a, yArrayPing1a, pingVal1, timeTillStart)
     getPingValues(xArrayPing2a, yArrayPing2a, pingVal2, timeTillStart)
+    print("Ping Values: {}".format(yArrayPing1a))
     ax12.plot(xArrayPing1a, yArrayPing1a, '--',color='royalblue', label='Derived from Ping Controller - Switch 2')
     ax22.plot(xArrayPing2a, yArrayPing2a,'--', color='royalblue', label='Ping')
 
