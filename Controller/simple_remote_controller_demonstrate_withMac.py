@@ -503,17 +503,13 @@ class SimpleSwitch13(app_manager.RyuApp):
             data = stdout.readlines()
             dataErr = stderr.readlines()
             time.sleep(0.1)
-        if dataErr > 0:
+        if len(dataErr) > 0:
                 print("Response Error: {}".format(data))
                 command = 'sudo tc qdisc add dev {} root netem delay {}ms limit {}'.format(socketChanging, value, limit)
                 stdin2, stdout2, stderr2 = ssh.exec_command(command)
-                while True:
-            # waiting for response
-                        data2 = stdout2.readlines()
-                        dataErr2 = stderr2.readlines()
-                        if len(data2) > 0 or len(dataErr2) > 0:
-                            print("Responsed to error:  Good: {} Still Error{}".format(data2, dataErr2))
-                            time.sleep(0.1)
+                data2 = stdout2.readlines()
+                dataErr2 = stderr2.readlines()
+                print("Responsed to error:  Good: {} Still Error{}".format(data2, dataErr2))              
         else:
             print("Response: {}".format(data))
         ssh.close()
