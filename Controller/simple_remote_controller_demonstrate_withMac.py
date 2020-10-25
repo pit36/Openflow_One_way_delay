@@ -496,13 +496,6 @@ class SimpleSwitch13(app_manager.RyuApp):
         stdin, stdout, stderr = ssh.exec_command(command)
         data = stdout.readlines()
         dataErr = stderr.readlines()
-        while True:
-            # waiting for response
-            if len(data) > 0 or len(dataErr) > 0:
-                break
-            data = stdout.readlines()
-            dataErr = stderr.readlines()
-            time.sleep(0.1)
         if len(dataErr) > 0:
                 print("Response Error: {}".format(data))
                 command = 'sudo tc qdisc add dev {} root netem delay {}ms limit {}'.format(socketChanging, value, limit)
@@ -513,6 +506,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         else:
             print("Response: {}".format(data))
         ssh.close()
+        print("changed Lat")
 
     def monitor_pingConnectionbetweenswitches(self, hostIP, clientIP):
         time.sleep(ADDITIONAL_WAITING_TIME+1.1)
