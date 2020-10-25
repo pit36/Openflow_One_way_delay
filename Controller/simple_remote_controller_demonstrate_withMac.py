@@ -138,6 +138,8 @@ class SimpleSwitch13(app_manager.RyuApp):
         # statusVariables
         #self.startingTime = 0.0
         self.timeTillPlot = 102.2
+        if TESTTYPE == 'ONELONGTIME':
+            self.timeTillPlot = 57600.2
         self.allreadyPlotted = False
 
         self.lastArrivedPackage = {}
