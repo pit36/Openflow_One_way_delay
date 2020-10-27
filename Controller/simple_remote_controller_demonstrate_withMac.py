@@ -100,7 +100,8 @@ class SimpleSwitch13(app_manager.RyuApp):
         super(SimpleSwitch13, self).__init__(*args, **kwargs)
 
         # dictionary for login to ssh server
-        self.pw_dict = {'10.0.1.2': ['ps1', 'tud'],'10.0.2.2': ['ps2', 'tud']}
+        #self.pw_dict = {'10.0.1.2': ['ps1', 'tud'],'10.0.2.2': ['ps2', 'tud']}
+        self.pw_dict = {'10.0.1.2': ['ps1', 'tud'],'10.0.2.2': ['ps2', 'tud'], '172.31.1.101' : ['ps1', 'tud'], '172.31.1.102' : ['ps2', 'tud']}
         # self.mac_to_port = {}
         self.dpidToDatapath = {}
         # TODO: matching the macs to dpid
@@ -510,7 +511,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         else:
             print("Response: {}".format(data))
         ssh.close()
-        
+
         if(ipConnecting not in self.changingLatMap.keys()):
                 self.changingLatMap[ipConnecting] = []
         latencyChangingElement = {}
