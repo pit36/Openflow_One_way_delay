@@ -71,7 +71,7 @@ MININET = False
 # ONELONGTIME = one latency measurement
 
 # IMPORTANT: While measurement, RTT is useless because only every second value is taken
-TESTTYPE = 'ONELONGTIME'
+TESTTYPE = 'CHANGINGLATCONTROLLER'
 
 # ALL -> statisticrequest, echo + echoboth
 # RTT -> statisticreq
