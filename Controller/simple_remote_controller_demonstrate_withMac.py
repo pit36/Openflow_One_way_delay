@@ -224,8 +224,8 @@ class SimpleSwitch13(app_manager.RyuApp):
             # between the switches
             latency_switch_1_to_2 = 25.0
             latency_switch_2_to_1 = 25.0
-            self.change_latency_remote(SWITCH_IP_1_2, INTERFACE_SWITCH_1_TO_SWITCH_2, latency_switch_1_to_2)
-            self.change_latency_remote(SWITCH_IP_2_2, INTERFACE_SWITCH_2_TO_SWITCH_1, latency_switch_2_to_1)
+            self.change_latency_remote(SWITCH_IP_1, INTERFACE_SWITCH_1_TO_SWITCH_2, latency_switch_1_to_2)
+            self.change_latency_remote(SWITCH_IP_2, INTERFACE_SWITCH_2_TO_SWITCH_1, latency_switch_2_to_1)
             if (SWITCH_IP_1_2 not in self.changingLatMap.keys()):
                 self.changingLatMap[SWITCH_IP_1_2] = []
                 self.changingLatMap[SWITCH_IP_2_2] = []
@@ -242,8 +242,8 @@ class SimpleSwitch13(app_manager.RyuApp):
             latency_switch_2_to_C = 30.0
             latency_C_switch_1 = 5.0
             latency_C_switch_2 = 30.0
-            self.change_latency_remote(SWITCH_IP_1_2, INTERFACE_SWITCH_1_TO_CONTROLLER, latency_switch_1_to_C)
-            self.change_latency_remote(SWITCH_IP_2_2, INTERFACE_SWITCH_2_TO_CONTROLLER, latency_switch_2_to_C)
+            self.change_latency_remote(SWITCH_IP_1, INTERFACE_SWITCH_1_TO_CONTROLLER, latency_switch_1_to_C)
+            self.change_latency_remote(SWITCH_IP_2, INTERFACE_SWITCH_2_TO_CONTROLLER, latency_switch_2_to_C)
             self.change_latency_local(INTERFACE_CONTROLLER_TO_SWITCH_1, latency_C_switch_1)
             self.change_latency_local(INTERFACE_CONTROLLER_TO_SWITCH_2, latency_C_switch_2)
 
@@ -310,8 +310,8 @@ class SimpleSwitch13(app_manager.RyuApp):
                         #float(self.timestepsize) *10.0 + 10.0
                     latencyValue2 = '60'
                         #float(self.timestepsize) * 10.0 + 20.0
-                    self.change_latency_remote(SWITCH_IP_1_2,INTERFACE_SWITCH_1_TO_SWITCH_2, latencyValue1)
-                    self.change_latency_remote(SWITCH_IP_2_2,INTERFACE_SWITCH_2_TO_SWITCH_1, latencyValue2)
+                    self.change_latency_remote(SWITCH_IP_1,INTERFACE_SWITCH_1_TO_SWITCH_2, latencyValue1)
+                    self.change_latency_remote(SWITCH_IP_2,INTERFACE_SWITCH_2_TO_SWITCH_1, latencyValue2)
                     
                     self.changedAlready = True
                     self.enamurationNumber += 1
@@ -320,63 +320,37 @@ class SimpleSwitch13(app_manager.RyuApp):
                 # step 1: changing the controller - switch latency
                 if 40.0 < time.time() - self.startingTime and self.changedAlready == False and 50.0 > time.time() - self.startingTime:
                 #if self.enamurationNumber*self.timestepsize > time.time() - self.startingTime:
-                    latencyValue1 = '20'
-                    latencyValue2 = '40'
+                    #latencyValue1 = '20'
+                    #latencyValue2 = '40'
                     # self.changeLatency(SWITCH_IP_1_2, INTERFACE_SWITCH_1_TO_CONTROLLER, latencyValue1)
                     # self.changeLatency(SWITCH_IP_2_2,'eth0', latencyValue2)
-                    self.change_latency_remote(SWITCH_IP_2, INTERFACE_SWITCH_2_TO_CONTROLLER, 60.0)
-                    if(SWITCH_IP_1_2 not in self.changingLatMap.keys()):
-                        self.changingLatMap[SWITCH_IP_1_2] = []
-                        self.changingLatMap[SWITCH_IP_2_2] = []
-
-                    command = 'sudo tc qdisc change dev {} root netem delay {}ms'.format(INTERFACE_CONTROLLER_TO_SWITCH_1, latencyValue2)
-                    nads = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE).communicate()
-                    self.logger.info("!!!!!!!!!!!!!!!!!!!!!!!LATENCYVALUECHANGED AT: {}  !!!!!!!!!!!! Output: {}".format(time.time()-self.startingTime, nads))
-
-                    latencyChangingElement1 = {}
-                    latencyChangingElement2 = {}
-                    latencyChangingElement1['timestamp'] = time.time()
-                    latencyChangingElement2['timestamp'] = time.time()
-                    latencyChangingElement1['value'] = latencyValue1
-                    latencyChangingElement2['value'] = latencyValue2
-                    self.changingLatMap[SWITCH_IP_1_2].append(latencyChangingElement1)
-                    self.changingLatMap[SWITCH_IP_2_2].append(latencyChangingElement2)
-                    self.logger.info('LatencychangeMap: {}'.format(self.changingLatMap))
+                    #self.change_latency_remote(SWITCH_IP_2, INTERFACE_SWITCH_2_TO_CONTROLLER, 60.0)
+                    self.change_latency_local(INTERFACE_CONTROLLER_TO_SWITCH_2, 60.0)
                     self.changedAlready = True
                     self.enamurationNumber += 1
+                    
                 if 50.0 < time.time() - self.startingTime and self.changedAlready == True and 60.0 > time.time() - self.startingTime:
                     self.changedAlready = False
+
                 # step 2: changing the latency in the switch 2 switch connection
                 if 60.0 < time.time() - self.startingTime and self.changedAlready == False and 80.0 > time.time() - self.startingTime:
-                    latencyValue1 = '60'
+                    latencyValue = '55'
                     # float(self.timestepsize) *10.0 + 10.0
-                    latencyValue2 = '60'
                     # float(self.timestepsize) * 10.0 + 20.0
-                    self.change_latency_remote(SWITCH_IP_1_2, INTERFACE_SWITCH_1_TO_SWITCH_2, latencyValue1)
-                    self.change_latency_remote(SWITCH_IP_2_2, INTERFACE_SWITCH_2_TO_SWITCH_1, latencyValue2)
-                    if (SWITCH_IP_1_2 not in self.changingLatMap.keys()):
-                        self.changingLatMap[SWITCH_IP_1_2] = []
-                        self.changingLatMap[SWITCH_IP_2_2] = []
-                    latencyChangingElement1 = {}
-                    latencyChangingElement2 = {}
-                    latencyChangingElement1['timestamp'] = time.time()
-                    latencyChangingElement2['timestamp'] = time.time()
-                    latencyChangingElement1['value'] = latencyValue1
-                    latencyChangingElement2['value'] = latencyValue2
-                    self.changingLatMap[SWITCH_IP_1_2].append(latencyChangingElement1)
-                    self.changingLatMap[SWITCH_IP_2_2].append(latencyChangingElement2)
-                    self.logger.info('LatencychangeMap: {}'.format(self.changingLatMap))
+                    self.change_latency_remote(SWITCH_IP_1, INTERFACE_SWITCH_1_TO_SWITCH_2, latencyValue1)
                     self.changedAlready = True
                     self.enamurationNumber += 1
 
+            # changing back?
+            '''
             if (80.0 < time.time() - self.startingTime and self.changedAlready == True and MININET == False and TESTTYPE == 'CHANGINGLAT') or (TESTTYPE == 'CHANGINGLATTOSHOWDIFFERENCE' and MININET == False and 99.0 < time.time() - self.startingTime):
                 # if self.enamurationNumber*self.timestepsize > time.time() - self.startingTime:
                 latencyValue1 = '20'
                 # float(self.timestepsize) *10.0 + 10.0
                 latencyValue2 = '20'
                 # float(self.timestepsize) * 10.0 + 20.0
-                self.change_latency_remote(SWITCH_IP_1_2, INTERFACE_SWITCH_1_TO_SWITCH_2, latencyValue1)
-                self.change_latency_remote(SWITCH_IP_2_2, INTERFACE_SWITCH_2_TO_SWITCH_1, latencyValue2)
+                self.change_latency_remote(SWITCH_IP_1, INTERFACE_SWITCH_1_TO_SWITCH_2, latencyValue1)
+                self.change_latency_remote(SWITCH_IP_2, INTERFACE_SWITCH_2_TO_SWITCH_1, latencyValue2)
                 if (SWITCH_IP_1_2 not in self.changingLatMap.keys()):
                     self.changingLatMap[SWITCH_IP_1_2] = []
                     self.changingLatMap[SWITCH_IP_2_2] = []
@@ -391,7 +365,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                 self.logger.info('LatencychangeMap: {}'.format(self.changingLatMap))
                 self.changedAlready = False
                 self.enamurationNumber += 1
-
+            '''
             if not self.allreadyPlotted:
                 timeNow = time.time()
                 self.logger.info("TIME since start: {}s Time Total: {}s -> {}%".format(timeNow - self.startingTime, self.timeTillPlot,
@@ -513,20 +487,31 @@ class SimpleSwitch13(app_manager.RyuApp):
         ssh.close()
 
         if(ipConnecting not in self.changingLatMap.keys()):
-                self.changingLatMap[ipConnecting] = []
+            self.changingLatMap[ipConnecting] = {}
+        if socketChanging not in self.changingLatMap[ipConnecting].keys():
+            self.changingLatMap[ipConnecting][socketChanging] = []
         latencyChangingElement = {}
         latencyChangingElement['timestamp'] = time.time()
         latencyChangingElement['value'] = value
-        self.changingLatMap[ipConnecting].append(latencyChangingElement)
+        self.changingLatMap[ipConnecting][socketChanging].append(latencyChangingElement)
 
     def change_latency_local(self, interfaceChanging='eth0', latencyValue=0.0, limit=1000):
-                command = 'sudo tc qdisc change dev {} root netem delay {}ms limit {}'.format(interfaceChanging, latencyValue, limit)
-                nads = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE).communicate()[0]
-                # if queue is not created yet
-                if len(nads) > 0:
-                    command = 'sudo tc qdisc add dev {} root netem delay {}ms limit {}'.format(interfaceChanging, latencyValue, limit)
-                    print("Queue added: {}".format(interfaceChanging))
-                #self.logger.info("!!!!!!!!!!!!!!!!!!!!!!!LATENCYVALUECHANGED AT: {}  !!!!!!!!!!!! Output: {}".format(time.time()-self.startingTime, nads))
+        command = 'sudo tc qdisc change dev {} root netem delay {}ms limit {}'.format(interfaceChanging, latencyValue, limit)
+        nads = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE).communicate()[0]
+        # if queue is not created yet
+        if len(nads) > 0:
+            command = 'sudo tc qdisc add dev {} root netem delay {}ms limit {}'.format(interfaceChanging, latencyValue, limit)
+            print("Queue added: {}".format(interfaceChanging))
+
+        if('LOCAL' not in self.changingLatMap.keys()):
+            self.changingLatMap['LOCAL'] = {}
+        if interfaceChanging not in self.changingLatMap['LOCAL'].keys():
+            self.changingLatMap['LOCAL'][interfaceChanging] = []
+        latencyChangingElement = {}
+        latencyChangingElement['timestamp'] = time.time()
+        latencyChangingElement['value'] = latencyValue
+        self.changingLatMap['LOCAL'][interfaceChanging].append(latencyChangingElement)
+        #self.logger.info("!!!!!!!!!!!!!!!!!!!!!!!LATENCYVALUECHANGED AT: {}  !!!!!!!!!!!! Output: {}".format(time.time()-self.startingTime, nads))
 
     def monitor_pingConnectionbetweenswitches(self, hostIP, clientIP):
         time.sleep(ADDITIONAL_WAITING_TIME+1.1)
