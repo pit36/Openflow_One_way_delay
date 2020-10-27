@@ -337,7 +337,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                     latencyValue = '55'
                     # float(self.timestepsize) *10.0 + 10.0
                     # float(self.timestepsize) * 10.0 + 20.0
-                    self.change_latency_remote(SWITCH_IP_1, INTERFACE_SWITCH_1_TO_SWITCH_2, latencyValue1)
+                    self.change_latency_remote(SWITCH_IP_1, INTERFACE_SWITCH_1_TO_SWITCH_2, latencyValue)
                     self.changedAlready = True
                     self.enamurationNumber += 1
 
