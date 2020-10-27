@@ -218,11 +218,12 @@ class SimpleSwitch13(app_manager.RyuApp):
         # waiting that all data is together
         time.sleep(ADDITIONAL_WAITING_TIME + 1.1)
 
+        # changing the latency between the switches
         if (TESTTYPE == 'CHANGINGLATCONTROLLER'):
             latencyValue1 = 40.0
             latencyValue2 = 40.0
-            self.changeLatency(SWITCH_IP_1_2, INTERFACE_SWITCH_1_TO_CONTROLLER, latencyValue1)
-            self.changeLatency(SWITCH_IP_2_2, INTERFACE_SWITCH_2_TO_CONTROLLER, latencyValue2)
+            self.changeLatency(SWITCH_IP_1_2, INTERFACE_SWITCH_1_TO_SWITCH_2, latencyValue1)
+            self.changeLatency(SWITCH_IP_2_2, INTERFACE_SWITCH_2_TO_SWITCH_1, latencyValue2)
             if (SWITCH_IP_1_2 not in self.changingLatMap.keys()):
                 self.changingLatMap[SWITCH_IP_1_2] = []
                 self.changingLatMap[SWITCH_IP_2_2] = []
@@ -316,11 +317,12 @@ class SimpleSwitch13(app_manager.RyuApp):
                     self.enamurationNumber += 1
 
             if TESTTYPE == 'CHANGINGLATCONTROLLER' and MININET == False:
+                # step 1: changing the controller - switch latency
                 if 40.0 < time.time() - self.startingTime and self.changedAlready == False and 50.0 > time.time() - self.startingTime:
                 #if self.enamurationNumber*self.timestepsize > time.time() - self.startingTime:
                     latencyValue1 = '20'
                     latencyValue2 = '40'
-                    self.changeLatency(SWITCH_IP_1_2, INTERFACE_SWITCH_1_TO_CONTROLLER, latencyValue1)
+                    # self.changeLatency(SWITCH_IP_1_2, INTERFACE_SWITCH_1_TO_CONTROLLER, latencyValue1)
                     # self.changeLatency(SWITCH_IP_2_2,'eth0', latencyValue2)
 
                     if(SWITCH_IP_1_2 not in self.changingLatMap.keys()):
@@ -344,7 +346,8 @@ class SimpleSwitch13(app_manager.RyuApp):
                     self.enamurationNumber += 1
                 if 50.0 < time.time() - self.startingTime and self.changedAlready == True and 60.0 > time.time() - self.startingTime:
                     self.changedAlready = False
-                if 62.0 < time.time() - self.startingTime and self.changedAlready == False and 80.0 > time.time() - self.startingTime:
+                # step 2: changing the latency in the switch 2 switch connection
+                if 60.0 < time.time() - self.startingTime and self.changedAlready == False and 80.0 > time.time() - self.startingTime:
                     latencyValue1 = '60'
                     # float(self.timestepsize) *10.0 + 10.0
                     latencyValue2 = '60'
