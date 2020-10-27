@@ -690,7 +690,6 @@ def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2,
     ax21 = fig2.add_subplot(211)
     ax22 = fig2.add_subplot(212)
 
-
     # labels
     ax12.set_xlabel('Time [s]')
     ax12.set_ylabel('Latency [ms]')
@@ -727,7 +726,7 @@ def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2,
     # plot Echo values
     ax11.plot(xArrayEcho1, yArrayEcho1, color='g', label='Asymmetry Detection')
     ax21.plot(xArrayEcho2, yArrayEcho2, '--', color='r', label='Asymmetry Detection')
-    print("Echo {}".format(yArrayEcho1))
+    print("Echo x:{} y:{}".format(xArrayEcho1, yArrayEcho1))
     # get ping values
     xArrayPing1 = []
     yArrayPing1 = []

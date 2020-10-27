@@ -2,7 +2,7 @@ import plotting
 import json
 
 ################## getting data ##################################
-path = "data/10_25_2020_15_55_Normal_ECHO/"
+path = "data/10_27_2020_15_30_CHANGINGLATCONTROLLER_ECHO/"
 mininet = False
 pingdata1 = {}
 pingdata2 = {}
@@ -101,7 +101,11 @@ with open(path + "whole_data.json","r") as fx:
 fx.close()
 # startingtime
 if(mininet == False):
-    startingtime = float(str(pingdata1[list(pingdata1.keys())[0]]))
+    # get first key
+    key1 = list(datamap.keys())[0]
+    key2 = list(datamap[key1].keys())[0]
+    startingtime = datamap[key1][key2]['latencyEchoRTT'][0]["timestamp"]
+    #startingtime = float(str(pingdata1[list(pingdata1.keys())[0]]))
     #startingtime = socketdata1[0]['Ts']
 else:
     startingtime = float(str(pingdata1[list(pingdata1.keys())[0]]))
@@ -130,7 +134,7 @@ else:
 #plotting.plotLatencyChangeAllRaspi(datamap,startingtime)
 
 # FUNCTIONS - Changing latency controller !!!
-#plotting.plotLatencyChangeCONTROLLERRaspi(datamap,startingtime,pingdata_inbetween1,pingdata_inbetween2, saved_echo_timeToC, saved_echo_timeToSw, saved_echo_rtt_to_dpid, pingdata1,pingdata2)
+plotting.plotLatencyChangeCONTROLLERRaspi(datamap,startingtime,pingdata_inbetween1,pingdata_inbetween2, saved_echo_timeToC, saved_echo_timeToSw, saved_echo_rtt_to_dpid, pingdata1, pingdata2)
 # FUNCTIONS - mininet_changing_Lat
 #plotting.plotLatencyChangeAllMininet(datamap,startingtime, path)
 # FUNCTIONS - adding BW with backlog
@@ -148,7 +152,7 @@ else:
 #plotting.plotRTTCompMininet(datamap, startingtime, saved_rtt_to_dpid, saved_echo_rtt_to_dpid, pingdata1, pingdata2)
 
 # NORMAL!:
-plotting.plotLatComp(datamap, startingtime, pingdata_inbetween1, pingdata_inbetween2)
+#plotting.plotLatComp(datamap, startingtime, pingdata_inbetween1, pingdata_inbetween2)
 #plotting.plotLatCompMininet(datamap, startingtime, path)
 
 #plotting.getAdjMatrix(datamap)
