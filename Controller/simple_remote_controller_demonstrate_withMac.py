@@ -34,7 +34,7 @@ DEFAULT_BW = 10000000
 
 MAX_PATHS = 2
 
-# For synchronisation
+# For ssh
 SWITCH_IP_1 = '172.31.1.101'
 SWITCH_IP_2 = '172.31.1.102'
 
@@ -48,8 +48,8 @@ INTERFACE_CONTROLLER_TO_SWITCH_2 = 'eth1'#'enxa0cec8200aaa'
 INTERFACE_SWITCH_1_TO_CONTROLLER = 'eth3'
 INTERFACE_SWITCH_2_TO_CONTROLLER = 'eth3'
 
-INTERFACE_SWITCH_1_TO_SWITCH_2 = 'br0'
-INTERFACE_SWITCH_2_TO_SWITCH_1 = 'br0'
+INTERFACE_SWITCH_1_TO_SWITCH_2 = 'eth0'
+INTERFACE_SWITCH_2_TO_SWITCH_1 = 'eth0'
 
 # IP for the OpenVSwitches in between, IPs of the swithces
 SWITCH_IP_1_inBetween = '10.0.0.1'
@@ -175,8 +175,8 @@ class SimpleSwitch13(app_manager.RyuApp):
 
         if(TESTTYPE == 'IPERF'):
             self.monitor_queues()
-            self.change_latency_remote(SWITCH_IP_1_2, INTERFACE_SWITCH_1_TO_SWITCH_2, 0.001, 3000)
-            self.change_latency_remote(SWITCH_IP_2_2, INTERFACE_SWITCH_2_TO_SWITCH_1, 0.001, 3000)
+            self.change_latency_remote(SWITCH_IP_1, INTERFACE_SWITCH_1_TO_SWITCH_2, 0.001, 3000)
+            self.change_latency_remote(SWITCH_IP_2, INTERFACE_SWITCH_2_TO_SWITCH_1, 0.001, 3000)
 
         # iperf
         self.iperfAlready = False
@@ -256,7 +256,7 @@ class SimpleSwitch13(app_manager.RyuApp):
             # 0 10 30 50 70 90
             latencyValue1 = 0.0
             latencyValue2 = 0.0
-            self.change_latency_remote(SWITCH_IP_1_2, INTERFACE_SWITCH_1_TO_SWITCH_2, latencyValue1)
+            self.change_latency_remote(SWITCH_IP_1, INTERFACE_SWITCH_1_TO_SWITCH_2, latencyValue1)
             if (SWITCH_IP_1_2 not in self.changingLatMap.keys()):
                 self.changingLatMap[SWITCH_IP_1_2] = []
                 self.changingLatMap[SWITCH_IP_2_2] = []
@@ -279,9 +279,9 @@ class SimpleSwitch13(app_manager.RyuApp):
                 if (time.time() - self.startingTime) > IPERF_START_TIME:
                     self.logger.info("Staring Ipferf adding")
                     # 2nd switch
-                    hub.spawn(self.addingBwIperfServer, SWITCH_IP_2_2)
+                    hub.spawn(self.addingBwIperfServer, SWITCH_IP_2)
                     # 1st switch
-                    hub.spawn(self.addingBwIperfClient, SWITCH_IP_1_2, SWITCH_IP_2_inBetween)
+                    hub.spawn(self.addingBwIperfClient, SWITCH_IP_1, SWITCH_IP_2_inBetween)
                     self.iperfAlready = True
 
             if TESTTYPE == 'CHANGINGLATTOSHOWDIFFERENCE' and MININET == False:
@@ -289,7 +289,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                 # in 10 sec steps
                 if self.changeit < time.time() - self.startingTime and self.changeit+10.0 > time.time() - self.startingTime:
                     latencyValue1 = self.changeit
-                    self.change_latency_remote(SWITCH_IP_1_2, INTERFACE_SWITCH_1_TO_SWITCH_2, latencyValue1)
+                    self.change_latency_remote(SWITCH_IP_1, INTERFACE_SWITCH_1_TO_SWITCH_2, latencyValue1)
                     if (SWITCH_IP_1_2 not in self.changingLatMap.keys()):
                         self.changingLatMap[SWITCH_IP_1_2] = []
                         self.changingLatMap[SWITCH_IP_2_2] = []
@@ -430,8 +430,8 @@ class SimpleSwitch13(app_manager.RyuApp):
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(hostIP, username=self.pw_dict[hostIP][0], password=self.pw_dict[hostIP][1])
 
-        command1 = 'sudo tc -s qdisc ls dev eth0 | grep -E -o "backlog [0-9]+b [0-9]+p" | grep -E -o "[0-9]+p" | grep -E -o "[0-9]+"'
-        command2 = 'sudo tc -s qdisc ls dev eth0 | grep -E -o "dropped [0-9]+" | grep -E -o "[0-9]+"'
+        command1 = 'sudo tc -s qdisc ls dev br0 | grep -E -o "backlog [0-9]+b [0-9]+p" | grep -E -o "[0-9]+p" | grep -E -o "[0-9]+"'
+        command2 = 'sudo tc -s qdisc ls dev br0 | grep -E -o "dropped [0-9]+" | grep -E -o "[0-9]+"'
 
         while (self.ping_ready[SWITCH_IP_1_2] == False):
             timebefore = time.time()
@@ -576,7 +576,7 @@ class SimpleSwitch13(app_manager.RyuApp):
             self.logger.info("Ping loopback")
             hub.spawn(self.monitor_ping, LOOPBACK_IP)
         else:
-            self.logger.info("Starting Ping Rasperry")
+            self.logger.info("Starting Ping controller - ping connection")
             hub.spawn(self.monitor_ping, SWITCH_IP_1_2)
             hub.spawn(self.monitor_ping, SWITCH_IP_2_2)
         # Between the raspian
@@ -589,8 +589,8 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.logger.info("MONITORING QUEUES STARTED")
         if MININET == False:
             # checking backlog
-            hub.spawn(self.checkBacklog, SWITCH_IP_1_2)
-            hub.spawn(self.checkBacklog, SWITCH_IP_2_2)
+            hub.spawn(self.checkBacklog, SWITCH_IP_1)
+            hub.spawn(self.checkBacklog, SWITCH_IP_2)
 
     def monitor_echo(self, datapath):
         time.sleep(ADDITIONAL_WAITING_TIME)
