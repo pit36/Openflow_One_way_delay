@@ -2,7 +2,7 @@ import plotting
 import json
 
 ################## getting data ##################################
-path = "data/10_28_2020_15_00_CHANGINGLATCONTROLLER_ECHO/"
+path = "data/10_28_2020_15_24_CHANGINGLATCONTROLLER_ECHO/"
 mininet = False
 pingdata1 = {}
 pingdata2 = {}

@@ -577,13 +577,13 @@ class SimpleSwitch13(app_manager.RyuApp):
             hub.spawn(self.monitor_ping, LOOPBACK_IP)
         else:
             self.logger.info("Starting Ping Rasperry")
-            hub.spawn(self.monitor_ping, SWITCH_IP_1)
-            hub.spawn(self.monitor_ping, SWITCH_IP_2)
+            hub.spawn(self.monitor_ping, SWITCH_IP_1_2)
+            hub.spawn(self.monitor_ping, SWITCH_IP_2_2)
         # Between the raspian
         if MININET == False:
             # Taking the safe route (for time synchronisation)
-            hub.spawn(self.monitor_pingConnectionbetweenswitches, SWITCH_IP_1_2, SWITCH_IP_2_inBetween)
-            hub.spawn(self.monitor_pingConnectionbetweenswitches, SWITCH_IP_2_2, SWITCH_IP_1_inBetween)
+            hub.spawn(self.monitor_pingConnectionbetweenswitches, SWITCH_IP_1, SWITCH_IP_2_inBetween)
+            hub.spawn(self.monitor_pingConnectionbetweenswitches, SWITCH_IP_2, SWITCH_IP_1_inBetween)
 
     def monitor_queues(self):
         self.logger.info("MONITORING QUEUES STARTED")
