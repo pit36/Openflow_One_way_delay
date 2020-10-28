@@ -87,7 +87,7 @@ WITH_WEB_INTERFACE = False
 WITH_SOCKET = False
 
 # update rate in s
-UPDATE_INTERVAL_CSW = 0.51
+UPDATE_INTERVAL_CSW = 0.31
 UPDATE_INTERVAL_LAT = 1
 
 # Waiting time before Measurements start
