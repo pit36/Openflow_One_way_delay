@@ -164,6 +164,8 @@ class SimpleSwitch13(app_manager.RyuApp):
         # in between switches
         self.ping_ready_inBetween = {}
 
+        self.wait = False
+
         ########## Processes ############
         # starting rest API
         if WITH_WEB_INTERFACE:
@@ -493,6 +495,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         latencyChangingElement = {}
         latencyChangingElement['timestamp'] = time.time()
         latencyChangingElement['value'] = latencyValue
+        self.wait = True
         self.changingLatMap[ipConnecting][interfaceChanging].append(latencyChangingElement)
 
     def change_latency_local(self, interfaceChanging='eth0', latencyValue=0.0, limit=1000):
@@ -511,6 +514,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         latencyChangingElement['value'] = latencyValue
         self.changingLatMap['LOCAL'][interfaceChanging].append(latencyChangingElement)
         self.logger.info('Latency changed LOCAL intf: {} to {} @ {}'.format(interfaceChanging, latencyValue, time.time()-self.startingTime))
+        self.wait = True
         #self.logger.info("!!!!!!!!!!!!!!!!!!!!!!!LATENCYVALUECHANGED AT: {}  !!!!!!!!!!!! Output: {}".format(time.time()-self.startingTime, nads))
 
     def monitor_pingConnectionbetweenswitches(self, hostIP, clientIP):
@@ -636,6 +640,9 @@ class SimpleSwitch13(app_manager.RyuApp):
         time.sleep(ADDITIONAL_WAITING_TIME + 3.2)
         print("MONITORING LATENCY STARTED")
         while True:
+            if self.wait:
+                self.wait = False
+                pass
             self.send_packet_out(datapath, ofproto.OFP_NO_BUFFER, ofproto.OFPP_CONTROLLER)
             hub.sleep(UPDATE_INTERVAL_LAT)
 
