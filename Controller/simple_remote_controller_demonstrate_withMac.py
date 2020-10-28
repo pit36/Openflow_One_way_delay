@@ -1142,8 +1142,8 @@ class SimpleSwitch13(app_manager.RyuApp):
             out_port_host = 4294967294
             actions_eth = [ofp_parser.OFPActionOutput(out_port_eth)]
             actions_host = [ofp_parser.OFPActionOutput(out_port_host)]
-            dp_1 = self.datapath_list[176809981058717] 
-            dp_2 = self.datapath_list[176809981052061] 
+            dp_1 = self.datapath_list[176809981052061] 
+            dp_2 = self.datapath_list[176809981058717] 
             type_ip = 'ipv4'
             type_arp = 'arp'
             #print( "!!!!!!!!!!!!!!!!!!ADDING FLOWS!!!!!!!!!!!!!!!!!!!!!")
