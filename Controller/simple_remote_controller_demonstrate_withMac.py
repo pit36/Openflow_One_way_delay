@@ -462,22 +462,22 @@ class SimpleSwitch13(app_manager.RyuApp):
             # each 1 sec
             time.sleep(1)
 
-    def change_latency_remote(self, ipConnecting, socketChanging='eth0', value=30, limit=1000):
+    def change_latency_remote(self, ipConnecting, interfaceChanging='eth0', latencyValue=30, limit=1000):
         # new ssh client
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(ipConnecting, username=self.pw_dict[ipConnecting][0], password=self.pw_dict[ipConnecting][1])
-        self.logger.info('Latency changed for: {} to {}'.format(socketChanging, value))
+        self.logger.info('Latency changed REMOTE for: {} intf: {} to {} @ {}'.format(ipConnecting, interfaceChanging, latencyValue, time.time()-self.startingTime))
         # for egress queue
         # limit is the queue size
-        command = 'sudo tc qdisc change dev {} root netem delay {}ms limit {}'.format(socketChanging, value, limit)
+        command = 'sudo tc qdisc change dev {} root netem delay {}ms limit {}'.format(interfaceChanging, latencyValue, limit)
         self.logger.info('LatencyChangingCmd : {}'.format(command))
         stdin, stdout, stderr = ssh.exec_command(command)
         data = stdout.readlines()
         dataErr = stderr.readlines()
         if len(dataErr) > 0:
                 print("Response Error: {}".format(data))
-                command = 'sudo tc qdisc add dev {} root netem delay {}ms limit {}'.format(socketChanging, value, limit)
+                command = 'sudo tc qdisc add dev {} root netem delay {}ms limit {}'.format(interfaceChanging, latencyValue, limit)
                 stdin2, stdout2, stderr2 = ssh.exec_command(command)
                 data2 = stdout2.readlines()
                 dataErr2 = stderr2.readlines()
@@ -488,12 +488,12 @@ class SimpleSwitch13(app_manager.RyuApp):
 
         if(ipConnecting not in self.changingLatMap.keys()):
             self.changingLatMap[ipConnecting] = {}
-        if socketChanging not in self.changingLatMap[ipConnecting].keys():
-            self.changingLatMap[ipConnecting][socketChanging] = []
+        if interfaceChanging not in self.changingLatMap[ipConnecting].keys():
+            self.changingLatMap[ipConnecting][interfaceChanging] = []
         latencyChangingElement = {}
         latencyChangingElement['timestamp'] = time.time()
-        latencyChangingElement['value'] = value
-        self.changingLatMap[ipConnecting][socketChanging].append(latencyChangingElement)
+        latencyChangingElement['value'] = latencyValue
+        self.changingLatMap[ipConnecting][interfaceChanging].append(latencyChangingElement)
 
     def change_latency_local(self, interfaceChanging='eth0', latencyValue=0.0, limit=1000):
         command = 'sudo tc qdisc change dev {} root netem delay {}ms limit {}'.format(interfaceChanging, latencyValue, limit)
@@ -502,7 +502,6 @@ class SimpleSwitch13(app_manager.RyuApp):
         if len(nads) > 0:
             command = 'sudo tc qdisc add dev {} root netem delay {}ms limit {}'.format(interfaceChanging, latencyValue, limit)
             print("Queue added: {}".format(interfaceChanging))
-
         if('LOCAL' not in self.changingLatMap.keys()):
             self.changingLatMap['LOCAL'] = {}
         if interfaceChanging not in self.changingLatMap['LOCAL'].keys():
@@ -511,6 +510,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         latencyChangingElement['timestamp'] = time.time()
         latencyChangingElement['value'] = latencyValue
         self.changingLatMap['LOCAL'][interfaceChanging].append(latencyChangingElement)
+        self.logger.info('Latency changed REMOTE for: {} intf: {} to {} @ {}'.format(interfaceChanging, latencyValue, time.time()-self.startingTime))
         #self.logger.info("!!!!!!!!!!!!!!!!!!!!!!!LATENCYVALUECHANGED AT: {}  !!!!!!!!!!!! Output: {}".format(time.time()-self.startingTime, nads))
 
     def monitor_pingConnectionbetweenswitches(self, hostIP, clientIP):
