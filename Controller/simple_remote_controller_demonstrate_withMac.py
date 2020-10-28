@@ -433,7 +433,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         command1 = 'sudo tc -s qdisc ls dev eth0 | grep -E -o "backlog [0-9]+b [0-9]+p" | grep -E -o "[0-9]+p" | grep -E -o "[0-9]+"'
         command2 = 'sudo tc -s qdisc ls dev eth0 | grep -E -o "dropped [0-9]+" | grep -E -o "[0-9]+"'
 
-        while (self.ping_ready[SWITCH_IP_1] == False):
+        while (self.ping_ready[SWITCH_IP_1_2] == False):
             timebefore = time.time()
             stdin, stdout, stderr = ssh.exec_command(command1)
             output1 = stdout.readlines()
@@ -1410,7 +1410,7 @@ class SimpleSwitch13(app_manager.RyuApp):
 
             # saving the data
 
-            while (self.ping_ready[SWITCH_IP_1] == False) or (self.ping_ready[SWITCH_IP_2] == False):
+            while (self.ping_ready[SWITCH_IP_1_2] == False) or (self.ping_ready[SWITCH_IP_2_2] == False):
                 # if empty
                 self.logger.info("ping_ready map: {}".format(self.ping_ready))
                 self.logger.info("no ping value rasp- waiting 1 sec")
@@ -1430,8 +1430,8 @@ class SimpleSwitch13(app_manager.RyuApp):
                     the_file2.write(json.dumps(self.data_map))
 
                 print("Writing ping data")
-                sw1data = self.create_ping_map(self.output[SWITCH_IP_1][0].decode("utf-8").splitlines())
-                sw2data = self.create_ping_map(self.output[SWITCH_IP_2][0].decode("utf-8").splitlines())
+                sw1data = self.create_ping_map(self.output[SWITCH_IP_1_2][0].decode("utf-8").splitlines())
+                sw2data = self.create_ping_map(self.output[SWITCH_IP_2_2][0].decode("utf-8").splitlines())
 
                 # saving data
                 with open('data/{}/output_ping_1.json'.format(timeStampStr), 'w') as the_file3:
