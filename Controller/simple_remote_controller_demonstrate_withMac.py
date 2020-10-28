@@ -640,9 +640,6 @@ class SimpleSwitch13(app_manager.RyuApp):
         time.sleep(ADDITIONAL_WAITING_TIME + 3.2)
         print("MONITORING LATENCY STARTED")
         while True:
-            if self.wait:
-                self.wait = False
-                pass
             self.send_packet_out(datapath, ofproto.OFP_NO_BUFFER, ofproto.OFPP_CONTROLLER)
             hub.sleep(UPDATE_INTERVAL_LAT)
 
@@ -965,6 +962,10 @@ class SimpleSwitch13(app_manager.RyuApp):
 
             # if package is newest
             if(timestampSent > self.lastArrivedPackage[dpidRec][dpidSent]):
+                if self.wait:
+                    print("Waited")
+                    self.wait = False
+                    return
                 # creating dictionaries and arrays
                 if not dpidRec in self.data_map.keys():
                     self.data_map[dpidRec] = {}
@@ -1462,8 +1463,8 @@ class SimpleSwitch13(app_manager.RyuApp):
                     self.logger.info("no ping value in between- waiting 1 sec: {}".format(self.ping_ready))
                     time.sleep(1)
                 try:
-                    sw1_in_between_data = self.create_ping_map(self.output[SWITCH_IP_1_inBetween])
-                    sw2_in_between_data = self.create_ping_map(self.output[SWITCH_IP_2_inBetween])
+                    sw1_in_between_data = self.create_ping_map(self.output[SWITCH_IP_2_inBetween])
+                    sw2_in_between_data = self.create_ping_map(self.output[SWITCH_IP_1_inBetween])
                     print("Got data ping in between")
                     # saving data
                     with open('data/{}/output_ping_1_inBetween.json'.format(timeStampStr), 'w') as the_file5:
