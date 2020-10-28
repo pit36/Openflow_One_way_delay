@@ -1437,8 +1437,8 @@ class SimpleSwitch13(app_manager.RyuApp):
                     the_file2.write(json.dumps(self.data_map))
 
                 print("Writing ping data")
-                sw1data = self.create_ping_map(self.output[SWITCH_IP_1_2][0].decode("utf-8").splitlines())
-                sw2data = self.create_ping_map(self.output[SWITCH_IP_2_2][0].decode("utf-8").splitlines())
+                sw1data = self.create_ping_map(self.output[SWITCH_IP_2_2][0].decode("utf-8").splitlines())
+                sw2data = self.create_ping_map(self.output[SWITCH_IP_1_2][0].decode("utf-8").splitlines())
 
                 # saving data
                 with open('data/{}/output_ping_1.json'.format(timeStampStr), 'w') as the_file3:
@@ -1462,8 +1462,8 @@ class SimpleSwitch13(app_manager.RyuApp):
                     self.logger.info("no ping value in between- waiting 1 sec: {}".format(self.ping_ready))
                     time.sleep(1)
                 try:
-                    sw1_in_between_data = self.create_ping_map(self.output[SWITCH_IP_2_inBetween])
-                    sw2_in_between_data = self.create_ping_map(self.output[SWITCH_IP_1_inBetween])
+                    sw1_in_between_data = self.create_ping_map(self.output[SWITCH_IP_1_inBetween])
+                    sw2_in_between_data = self.create_ping_map(self.output[SWITCH_IP_2_inBetween])
                     print("Got data ping in between")
                     # saving data
                     with open('data/{}/output_ping_1_inBetween.json'.format(timeStampStr), 'w') as the_file5:
