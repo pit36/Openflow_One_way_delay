@@ -510,7 +510,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         latencyChangingElement['timestamp'] = time.time()
         latencyChangingElement['value'] = latencyValue
         self.changingLatMap['LOCAL'][interfaceChanging].append(latencyChangingElement)
-        self.logger.info('Latency changed REMOTE for: {} intf: {} to {} @ {}'.format(interfaceChanging, latencyValue, time.time()-self.startingTime))
+        self.logger.info('Latency changed LOCAL intf: {} to {} @ {}'.format(interfaceChanging, latencyValue, time.time()-self.startingTime))
         #self.logger.info("!!!!!!!!!!!!!!!!!!!!!!!LATENCYVALUECHANGED AT: {}  !!!!!!!!!!!! Output: {}".format(time.time()-self.startingTime, nads))
 
     def monitor_pingConnectionbetweenswitches(self, hostIP, clientIP):
