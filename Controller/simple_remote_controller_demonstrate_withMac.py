@@ -78,7 +78,7 @@ TESTTYPE = 'IPERF'
 # ECHORTT -> echo rtt
 # ECHO -> updownmeaurement
 # PORTSTATS -> only recieving portstats
-MEASUREMENTTYPE = 'ECHORTT'
+MEASUREMENTTYPE = 'PORTSTATS'
 
 # If Web Interface should be included
 WITH_WEB_INTERFACE = False
