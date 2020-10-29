@@ -137,6 +137,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.temp_bw_map = {}
         self.rtt_port_stats_sent = {}
 
+
         # statusVariables
         #self.startingTime = 0.0
         self.timeTillPlot = 102.2
@@ -167,6 +168,9 @@ class SimpleSwitch13(app_manager.RyuApp):
 
         self.wait = False
 
+        # when system is started
+        self.startingTime = time.time() + ADDITIONAL_WAITING_TIME
+        
         ########## Processes ############
         # starting rest API
         if WITH_WEB_INTERFACE:
@@ -192,8 +196,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.changingLatMap = {}
         self.changedAlready = False
 
-        # when system is started
-        self.startingTime = time.time() + ADDITIONAL_WAITING_TIME
+        
 
         self.changeit = 30.0
 
