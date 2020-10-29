@@ -226,8 +226,8 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.change_latency_remote(SWITCH_IP_2, INTERFACE_SWITCH_2_TO_SWITCH_1, latency_switch_2_to_1)
         self.change_latency_remote(SWITCH_IP_1, INTERFACE_SWITCH_2_TO_SWITCH_1, 25.0)
         self.change_latency_remote(SWITCH_IP_2, INTERFACE_SWITCH_1_TO_SWITCH_2, 25.0)
-        track_latency_change(SWITCH_IP_1_2, latency_switch_1_to_2)
-        track_latency_change(SWITCH_IP_2_2, latency_switch_2_to_1)
+        self.track_latency_change(SWITCH_IP_1_2, latency_switch_1_to_2)
+        self.track_latency_change(SWITCH_IP_2_2, latency_switch_2_to_1)
 
         # Between controller and switches
         latency_switch_1_to_C = 5.0
