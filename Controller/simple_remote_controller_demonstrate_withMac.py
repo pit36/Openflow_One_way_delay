@@ -170,7 +170,10 @@ class SimpleSwitch13(app_manager.RyuApp):
 
         # when system is started
         self.startingTime = time.time() + ADDITIONAL_WAITING_TIME
-        
+
+        # tracking latencychangelink
+
+        self.changingLatMap = {}
         ########## Processes ############
         # starting rest API
         if WITH_WEB_INTERFACE:
@@ -182,8 +185,8 @@ class SimpleSwitch13(app_manager.RyuApp):
 
         if(TESTTYPE == 'IPERF'):
             self.monitor_queues()
-            self.change_latency_remote(SWITCH_IP_1, INTERFACE_SWITCH_1_TO_SWITCH_2, 0.001, 3000)
-            self.change_latency_remote(SWITCH_IP_2, INTERFACE_SWITCH_2_TO_SWITCH_1, 0.001, 3000)
+            self.change_latency_remote(SWITCH_IP_1, INTERFACE_SWITCH_1_TO_SWITCH_2, 25.0, 3000)
+            self.change_latency_remote(SWITCH_IP_2, INTERFACE_SWITCH_2_TO_SWITCH_1, 25.0, 3000)
 
         # iperf
         self.iperfAlready = False
@@ -193,7 +196,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.enamurationNumber = 1
         # each (...) seconds changed
         self.timestepsize = 30.0
-        self.changingLatMap = {}
+        
         self.changedAlready = False
 
         
