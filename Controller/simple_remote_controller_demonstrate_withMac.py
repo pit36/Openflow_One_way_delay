@@ -421,8 +421,8 @@ class SimpleSwitch13(app_manager.RyuApp):
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(hostIP, username=self.pw_dict[hostIP][0], password=self.pw_dict[hostIP][1])
 
-        command1 = 'sudo tc -s qdisc ls dev br0 | grep -E -o "backlog [0-9]+b [0-9]+p" | grep -E -o "[0-9]+p" | grep -E -o "[0-9]+"'
-        command2 = 'sudo tc -s qdisc ls dev br0 | grep -E -o "dropped [0-9]+" | grep -E -o "[0-9]+"'
+        command1 = 'sudo tc -s qdisc ls dev eth1 | grep -E -o "backlog [0-9]+b [0-9]+p" | grep -E -o "[0-9]+p" | grep -E -o "[0-9]+"'
+        command2 = 'sudo tc -s qdisc ls dev eth1 | grep -E -o "dropped [0-9]+" | grep -E -o "[0-9]+"'
 
         while (self.ping_ready[SWITCH_IP_1_2] == False):
             timebefore = time.time()
@@ -1496,17 +1496,19 @@ class SimpleSwitch13(app_manager.RyuApp):
 
             if(TESTTYPE == 'IPERF' and len(list(self.backlog.keys()))>0):
                 try:
+                    print("Packets BACKLOCKED: {}".format(self.backlog))
                     with open('data/{}/output_backlog_1.json'.format(timeStampStr), 'w') as the_fileab1:
-                        the_fileab1.write(json.dumps(self.backlog[SWITCH_IP_1_2]))
+                        the_fileab1.write(json.dumps(self.backlog[SWITCH_IP_1]))
                     with open('data/{}/output_backlog_2.json'.format(timeStampStr), 'w') as the_fileab2:
-                        the_fileab2.write(json.dumps(self.backlog[SWITCH_IP_2_2]))
+                        the_fileab2.write(json.dumps(self.backlog[SWITCH_IP_2]))
                 except Exception as e:
                     self.logger.info("EXCEPTION Backlock: {}".format(e))
                 try:
+                    print("Packets DROPPED: {}".format(self.packets_drop))
                     with open('data/{}/output_dropped_1.json'.format(timeStampStr), 'w') as the_fileabc1:
-                        the_fileabc1.write(json.dumps(self.packets_drop[SWITCH_IP_1_2]))
+                        the_fileabc1.write(json.dumps(self.packets_drop[SWITCH_IP_1]))
                     with open('data/{}/output_dropped_2.json'.format(timeStampStr), 'w') as the_fileabc2:
-                        the_fileabc2.write(json.dumps(self.packets_drop[SWITCH_IP_2_2]))
+                        the_fileabc2.write(json.dumps(self.packets_drop[SWITCH_IP_2]))
                 except Exception as e:
                     self.logger.info("EXCEPTION dropped: {}".format(e))
 
