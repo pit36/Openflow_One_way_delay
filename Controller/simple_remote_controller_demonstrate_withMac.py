@@ -700,11 +700,10 @@ class SimpleSwitch13(app_manager.RyuApp):
 
                             # bw (bytes/sec)
                             bw = byteDiff / tsDiff
-                            #if bw < 20000:
+                            if bw < 85850995:
                                 # save it in map
-                            print(bw)
-                            self.saveBwInMap(dpidRec, port_no, bw, self.temp_bw_map[dpidRec][port_no]['tsUTC'])
-                            self.temp_bw_map[dpidRec][port_no]['tsUTC'] = time.time()
+                                self.saveBwInMap(dpidRec, port_no, bw, self.temp_bw_map[dpidRec][port_no]['tsUTC'])
+                                self.temp_bw_map[dpidRec][port_no]['tsUTC'] = time.time()
                         # latencymeasurement
                         oldTime = self.rtt_port_stats_sent[dpidRec]
                         totalRTT = currentTime - oldTime
