@@ -375,8 +375,8 @@ def plotLatencyRisingBandwithRaspi(dataMap, timeTillStart, pingData1, pingData2,
     getxyArrayLatency(xArrayBw2, yArrayBw2, dataMap[key2][key1]['bw'], timeTillStart)
 
     # Umrechnung in byte
-    yArrayBw11 = map(lambda x: (x * 8)/(1024), yArrayBw1)
-    yArrayBw21 = map(lambda x: (x * 8)/(1024), yArrayBw2)
+    yArrayBw11 = list(map(lambda x: (x * 8)/(1024), yArrayBw1))
+    yArrayBw21 = list(map(lambda x: (x * 8)/(1024), yArrayBw2))
 
     ax22.plot(xArrayBw1, yArrayBw11, 'x-',color= 'royalblue', label = 'Bandwith')
 

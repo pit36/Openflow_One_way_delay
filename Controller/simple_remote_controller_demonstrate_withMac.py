@@ -57,7 +57,7 @@ SWITCH_IP_2_inBetween = '10.0.0.2'
 
 LOOPBACK_IP = "127.0.0.1"
 
-IPERF_START_TIME = 20.0
+IPERF_START_TIME = 0.0
 
 # virtual -> mininet
 MININET = False
@@ -282,8 +282,10 @@ class SimpleSwitch13(app_manager.RyuApp):
                     # 2nd switch
                     #hub.spawn(self.addingBwIperfServer, SWITCH_IP_2)
                     # 1st switch
-                    hub.spawn(self.addingBwIperfClient, SWITCH_IP_1, SWITCH_IP_2_inBetween)
+                    hub.spawn(self.addingBwIperfClient, SWITCH_IP_1, SWITCH_IP_2_inBetween, 5001, 50, 0)
+                    hub.spawn(self.addingBwIperfClient, SWITCH_IP_1, SWITCH_IP_2_inBetween, 5002, 42, 20)
                     self.iperfAlready = True
+            
 
             # incrementing by steps
             if TESTTYPE == 'CHANGINGLATTOSHOWDIFFERENCE' and MININET == False:
@@ -369,20 +371,20 @@ class SimpleSwitch13(app_manager.RyuApp):
                     self.handleDataForPlotting()
             time.sleep(4.1)
 
-    def addingBwIperfClient(self, hostClientIP, serverIP, port = 5001):
+    def addingBwIperfClient(self, hostClientIP, serverIP, port = 5001, val=50, sleeptime=0):
 
         # new ssh client
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(hostClientIP, username=self.pw_dict[hostClientIP][0], password=self.pw_dict[hostClientIP][1])
 
-        #time.sleep(5)
-        firstVal = 92
-        sndVal = 97
+        time.sleep(sleeptime)
+        #firstVal = 92
+        #sndVal = 97
         #print("IPERF adding bw: {}Mbit".format(startAmount + incrementAmount * x))
         #stdin, stdout, stderr = ssh.exec_command(
         #    "sudo bash iperf_script.sh")
-        stdin, stdout, stderr = ssh.exec_command("iperf -c {} -t 60 -p {} -b {}M -u -i 1 &".format(serverIP, port, firstVal))
+        stdin, stdout, stderr = ssh.exec_command("iperf -c {} -t 60 -p {} -b {}M -u -i 1 &".format(serverIP, port, val))
         #print(stdout.readlines())
         # startingamount
         #startAmount = 95
