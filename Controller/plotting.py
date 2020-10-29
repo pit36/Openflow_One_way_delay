@@ -300,8 +300,9 @@ def plotLatencyRisingBandwith(dataMap, timeTillStart):
     fig2.savefig("second.svg")
     plt.show()
 
-def plotLatencyRisingBandwithRaspi(dataMap, timeTillStart, pingData1, pingData2,saved_backlog1,saved_backlog2, saved_dropped1,saved_dropped2):
-
+def plotLatencyRisingBandwithRaspi(dataMap, timeTillStart, pingData1, pingData2,saved_backlog1,saved_backlog2, saved_dropped1,saved_dropped2, edgeLeft=10, edgeRight= 80):
+    timeTillStart = timeTillStart + 5
+    style.setup3()
     key1 = list(dataMap.keys())[0]
     key2 = list(dataMap.keys())[1]
 
@@ -352,9 +353,12 @@ def plotLatencyRisingBandwithRaspi(dataMap, timeTillStart, pingData1, pingData2,
     if (len(dataMap[key1][key2]['latency']) > 0):
         getxyArrayLatency(xArray1, yArray1, dataMap[key1][key2]['latency'], timeTillStart)
         getxyArrayLatency(xArray2, yArray2, dataMap[key2][key1]['latency'], timeTillStart)
-    else:
+    elif (len(dataMap[key1][key2]['latencyEcho']) > 0):
         getxyArrayLatency(xArray1, yArray1, dataMap[key1][key2]['latencyEcho'], timeTillStart)
         getxyArrayLatency(xArray2, yArray2, dataMap[key2][key1]['latencyEcho'], timeTillStart)
+    else:
+        getxyArrayLatency(xArray1, yArray1, dataMap[key1][key2]['latencyPortStats'], timeTillStart)
+        getxyArrayLatency(xArray2, yArray2, dataMap[key2][key1]['latencyPortStats'], timeTillStart)
 
     #ax11.plot(xArray1, yArray1, label = 'Measured Latency')
     ax21.plot(xArray2, yArray2,'x-', color= 'tomato', label = 'Measured Latency')
@@ -385,25 +389,25 @@ def plotLatencyRisingBandwithRaspi(dataMap, timeTillStart, pingData1, pingData2,
     ax23.grid()
     tick_spacing = 10
     ax21.xaxis.set_major_locator(ticker.MultipleLocator(tick_spacing))
-
+    ax22.yaxis.set_major_locator(ticker.MultipleLocator(tick_spacing))
     # labels
-    ax21.set_ylabel(r'Latency [ms]', fontsize = 18)
-    ax22.set_ylabel(r'Traffic [Mbit/s]', fontsize = 18)
-    ax23.set_ylabel(r'Packets', fontsize = 18)
-    ax23.set_xlabel(r'Time [s]', fontsize = 18)
+    ax21.set_ylabel(r'Latency [ms]')#, fontsize = 18)
+    ax22.set_ylabel(r'Traffic [Mbit/s]')#, fontsize = 18)
+    ax23.set_ylabel(r'Packets')#, fontsize = 18)
+    ax23.set_xlabel(r'Time [s]')#, fontsize = 18)
 
-    ax21.set_xlim(12, 63)
-    ax22.set_xlim(12, 63)
-    ax23.set_xlim(12, 63)
+    ax21.set_xlim(0, edgeRight)
+    ax22.set_xlim(0, edgeRight)
+    ax23.set_xlim(0, edgeRight)
 
     ax22.set_ylim(0, 100)
-    #style.setup3()
-    legend1 = ax23.legend(loc='upper left', fontsize = 20)
-    legend2 = ax21.legend(loc='upper left', fontsize = 20)
-
+    
+    legend1 = ax23.legend(loc='upper left')#, fontsize = 20)
+    legend2 = ax21.legend(loc='upper left')#, fontsize = 20)
+    legend3 = ax22.legend(loc='upper right')
     # check if data time is in intervall
     #fig1.savefig("first.svg")
-    #fig2.savefig("bw_raising_1.pdf", format='pdf', bbox_inches='tight')
+    fig2.savefig("bw_raising.pdf", format='pdf', bbox_inches='tight')
     plt.show()
 
 def plotDifferenceEchoRTT(saved_rtt_to_dpid, saved_echo_rtt_to_dpid, timeTillStart):

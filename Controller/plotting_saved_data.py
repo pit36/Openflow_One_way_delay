@@ -2,7 +2,7 @@ import plotting
 import json
 
 ################## getting data ##################################
-path = "data/10_29_2020_21_15_IPERF_ECHORTT/"
+path = "data/10_29_2020_21_30_IPERF_PORTSTATS/"
 mininet = False
 pingdata1 = {}
 pingdata2 = {}
@@ -104,7 +104,10 @@ if(mininet == False):
     # get first key
     key1 = list(datamap.keys())[0]
     key2 = list(datamap[key1].keys())[0]
-    startingtime = datamap[key1][key2]['latencyEchoRTT'][0]["timestamp"]
+    if (len(datamap[key1][key2]['latencyEcho']) > 0):
+        startingtime = datamap[key1][key2]['latencyEchoRTT'][0]["timestamp"]
+    else:
+        startingtime = datamap[key1][key2]['latencyPortStats'][0]["timestamp"]
 else:
     startingtime = float(str(pingdata1[list(pingdata1.keys())[0]]))
 

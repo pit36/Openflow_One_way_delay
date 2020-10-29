@@ -69,16 +69,16 @@ MININET = False
 # CHANGINGLATCONTROLLER = latency changes controller
 # CHANGINGLATTOSHOWDIFFERENCE = stairs up
 # ONELONGTIME = one latency measurement
-
+# ONELONGTIMEIPERF = one latency measurement
 # IMPORTANT: While measurement, RTT is useless because only every second value is taken
-TESTTYPE = 'IPERF'
+TESTTYPE = 'ONELONGTIME'
 
 # ALL -> statisticrequest, echo + echoboth
 # RTT -> statisticreq
 # ECHORTT -> echo rtt
 # ECHO -> updownmeaurement
 # PORTSTATS -> only recieving portstats
-MEASUREMENTTYPE = 'PORTSTATS'
+MEASUREMENTTYPE = 'ALL'
 
 # If Web Interface should be included
 WITH_WEB_INTERFACE = False
@@ -87,7 +87,7 @@ WITH_WEB_INTERFACE = False
 WITH_SOCKET = False
 
 # update rate in s
-UPDATE_INTERVAL_CSW = 0.31
+UPDATE_INTERVAL_CSW = 0.51
 UPDATE_INTERVAL_LAT = 1
 
 # Waiting time before Measurements start

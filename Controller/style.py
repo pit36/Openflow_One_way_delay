@@ -32,20 +32,20 @@ def setup3(width=20, height=35, params={}):
     rc = {'backend': 'ps',
           'text.usetex': True,
           #'axes.usetex': True,
-          #'text.latex.preamble': ['\\usepackage{gensymb}'],
-          'axes.labelsize': 14, # fontsize for x and y labels (was 10)
-          'axes.titlesize': 14,
-          'font.size': 20, # was 10
-          'legend.fontsize': 14, # was 10
-          #'legend.handlelength': 4,
-          #'xtick.labelsize': 30,
-          #'ytick.labelsize': 18,
+          'text.latex.preamble': ['\\usepackage{gensymb}'],
+          'axes.labelsize': 24, # fontsize for x and y labels (was 10)
+          'axes.titlesize': 24,
+          'font.size': 24, # was 10
+          'legend.fontsize': 24, # was 10
+          'legend.handlelength': 4,
+          'xtick.labelsize': 24,
+          'ytick.labelsize': 24,
           'figure.figsize': [width,height],
           'font.family': 'serif',
           'figure.subplot.top': 0.95,
-          'figure.subplot.left': 0.17,
+          'figure.subplot.left': 0.05,
           'figure.subplot.right': 0.95,
-          'figure.subplot.bottom': 0.2,
+          'figure.subplot.bottom': 0.05,
           'savefig.dpi': 300
     }
     rc.update(params)
