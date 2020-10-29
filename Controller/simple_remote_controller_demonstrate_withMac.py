@@ -143,6 +143,8 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.timeTillPlot = 102.2
         if TESTTYPE == 'ONELONGTIME':
             self.timeTillPlot = 57600.2
+        if TESTTYPE == 'ONELONGTIMEIPERF':
+            self.timeTillPlot = 576.2
         self.allreadyPlotted = False
 
         self.lastArrivedPackage = {}
@@ -270,6 +272,9 @@ class SimpleSwitch13(app_manager.RyuApp):
         if(TESTTYPE == 'ONELONGTIME'):
             self.set_default_setup()
 
+        if(TESTTYPE == 'ONELONGTIMEIPERF'):
+            self.set_default_setup()
+
         while True:
             
             # matrix creation
@@ -285,7 +290,6 @@ class SimpleSwitch13(app_manager.RyuApp):
                     hub.spawn(self.addingBwIperfClient, SWITCH_IP_1, SWITCH_IP_2_inBetween, 5001, 50, 10)
                     hub.spawn(self.addingBwIperfClient, SWITCH_IP_1, SWITCH_IP_2_inBetween, 5002, 44, 30)
                     self.iperfAlready = True
-            
 
             # incrementing by steps
             if TESTTYPE == 'CHANGINGLATTOSHOWDIFFERENCE' and MININET == False:
@@ -696,10 +700,11 @@ class SimpleSwitch13(app_manager.RyuApp):
 
                             # bw (bytes/sec)
                             bw = byteDiff / tsDiff
-                            if bw < 100:
+                            #if bw < 20000:
                                 # save it in map
-                                self.saveBwInMap(dpidRec, port_no, bw, self.temp_bw_map[dpidRec][port_no]['tsUTC'])
-                                self.temp_bw_map[dpidRec][port_no]['tsUTC'] = time.time()
+                            print(bw)
+                            self.saveBwInMap(dpidRec, port_no, bw, self.temp_bw_map[dpidRec][port_no]['tsUTC'])
+                            self.temp_bw_map[dpidRec][port_no]['tsUTC'] = time.time()
                         # latencymeasurement
                         oldTime = self.rtt_port_stats_sent[dpidRec]
                         totalRTT = currentTime - oldTime
