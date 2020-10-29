@@ -71,14 +71,14 @@ MININET = False
 # ONELONGTIME = one latency measurement
 
 # IMPORTANT: While measurement, RTT is useless because only every second value is taken
-TESTTYPE = 'CHANGINGLAT'
+TESTTYPE = 'IPERF'
 
 # ALL -> statisticrequest, echo + echoboth
 # RTT -> statisticreq
 # ECHORTT -> echo rtt
 # ECHO -> updownmeaurement
 # PORTSTATS -> only recieving portstats
-MEASUREMENTTYPE = 'ECHO'
+MEASUREMENTTYPE = 'ECHORTT'
 
 # If Web Interface should be included
 WITH_WEB_INTERFACE = False
@@ -274,7 +274,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                 if (time.time() - self.startingTime) > IPERF_START_TIME:
                     self.logger.info("Staring Ipferf adding")
                     # 2nd switch
-                    hub.spawn(self.addingBwIperfServer, SWITCH_IP_2)
+                    #hub.spawn(self.addingBwIperfServer, SWITCH_IP_2)
                     # 1st switch
                     hub.spawn(self.addingBwIperfClient, SWITCH_IP_1, SWITCH_IP_2_inBetween)
                     self.iperfAlready = True
@@ -371,15 +371,12 @@ class SimpleSwitch13(app_manager.RyuApp):
         ssh.connect(hostClientIP, username=self.pw_dict[hostClientIP][0], password=self.pw_dict[hostClientIP][1])
 
         #time.sleep(5)
-        firstVal = 95
+        firstVal = 92
         sndVal = 97
         #print("IPERF adding bw: {}Mbit".format(startAmount + incrementAmount * x))
-        stdin, stdout, stderr = ssh.exec_command(
-            "sudo bash iperf_script.sh")
-        print(stdout.readlines())
-
         #stdin, stdout, stderr = ssh.exec_command(
-        #    "iperf -c {} -t 60 -p {} -b {}M -u -i 1 &".format(serverIP, port, sndVal))
+        #    "sudo bash iperf_script.sh")
+        stdin, stdout, stderr = ssh.exec_command("iperf -c {} -t 60 -p {} -b {}M -u -i 1 &".format(serverIP, port, firstVal))
         #print(stdout.readlines())
         # startingamount
         #startAmount = 95

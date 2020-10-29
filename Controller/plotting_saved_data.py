@@ -2,7 +2,7 @@ import plotting
 import json
 
 ################## getting data ##################################
-path = "data/10_29_2020_16_58_CHANGINGLATCONTROLLER_ECHO/"
+path = "data/10_29_2020_18_00_CHANGINGLAT_ECHO/"
 mininet = False
 pingdata1 = {}
 pingdata2 = {}
@@ -105,10 +105,24 @@ if(mininet == False):
     key1 = list(datamap.keys())[0]
     key2 = list(datamap[key1].keys())[0]
     startingtime = datamap[key1][key2]['latencyEchoRTT'][0]["timestamp"]
-    #startingtime = float(str(pingdata1[list(pingdata1.keys())[0]]))
-    #startingtime = socketdata1[0]['Ts']
 else:
     startingtime = float(str(pingdata1[list(pingdata1.keys())[0]]))
+
+# Changing latency controller !!!
+#plotting.plotLatencyChangeCONTROLLERRaspi(datamap,startingtime,pingdata_inbetween1,pingdata_inbetween2, saved_echo_timeToC, saved_echo_timeToSw, saved_echo_rtt_to_dpid, pingdata1, pingdata2)
+
+# FUNCTIONS - adding BW with backlog
+#plotting.plotLatencyRisingBandwithRaspi(datamap,startingtime, pingdata_inbetween1, pingdata_inbetween2, saved_backlog1, saved_backlog2, saved_dropped1, saved_dropped2)
+
+# difference diagram
+#plotting.plotDifferenceEchoRTT(saved_rtt_to_dpid,saved_echo_rtt_to_dpid,startingtime)
+
+# NORMAL!:
+#plotting.plotLatComp(datamap, startingtime, pingdata_inbetween1, pingdata_inbetween2)
+
+# one measuremnt
+plotting.plotLatencyChangeStatsOne_withping(datamap,startingtime,'latencyEchoRTT',pingdata_inbetween1,pingdata_inbetween2)
+
 # else:
 #     first = datamap[list(datamap.keys())[0]]
 #     second = first[list(first.keys())[0]]
@@ -133,12 +147,10 @@ else:
 
 #plotting.plotLatencyChangeAllRaspi(datamap,startingtime)
 
-# FUNCTIONS - Changing latency controller !!!
-plotting.plotLatencyChangeCONTROLLERRaspi(datamap,startingtime,pingdata_inbetween1,pingdata_inbetween2, saved_echo_timeToC, saved_echo_timeToSw, saved_echo_rtt_to_dpid, pingdata1, pingdata2)
+# FUNCTIONS - 
 # FUNCTIONS - mininet_changing_Lat
 #plotting.plotLatencyChangeAllMininet(datamap,startingtime, path)
-# FUNCTIONS - adding BW with backlog
-#plotting.plotLatencyRisingBandwithRaspi(datamap,startingtime, pingdata_inbetween1, pingdata_inbetween2, saved_backlog1, saved_backlog2, saved_dropped1, saved_dropped2)
+
 
 # Bi functions - compare Socket with echo
 #plotting.timeToSwCCompare(saved_echo_rtt_to_dpid, saved_echo_rtt_to_dpid, saved_echo_timeToSw, saved_echo_timeToC, socketdata1, socketdata2,pingdata1, pingdata2)
