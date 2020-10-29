@@ -253,16 +253,16 @@ class SimpleSwitch13(app_manager.RyuApp):
 
         # changing the latency between the switches
         if (TESTTYPE == 'CHANGINGLATCONTROLLER'):
-            set_default_setup()
+            self.set_default_setup()
 
         if(TESTTYPE == 'CHANGINGLATTOSHOWDIFFERENCE'):
-            set_default_setup()
+            self.set_default_setup()
 
         if(TESTTYPE == 'CHANGINGLAT'):
-            set_default_setup()
+            self.set_default_setup()
 
         if(TESTTYPE == 'ONELONGTIME'):
-            set_default_setup()
+            self.set_default_setup()
 
         while True:
             
@@ -307,7 +307,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                     self.change_latency_remote(SWITCH_IP_1, INTERFACE_SWITCH_1_TO_SWITCH_2, latencyValue1)
                     self.changedAlready = True
                     self.enamurationNumber += 1
-                    track_latency_change(SWITCH_IP_1_2, latencyValue1)
+                    self.track_latency_change(SWITCH_IP_1_2, latencyValue1)
 
             if TESTTYPE == 'CHANGINGLATCONTROLLER' and MININET == False:
                 # step 1: changing the controller - switch latency
