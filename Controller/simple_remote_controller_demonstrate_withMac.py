@@ -282,8 +282,8 @@ class SimpleSwitch13(app_manager.RyuApp):
                     # 2nd switch
                     #hub.spawn(self.addingBwIperfServer, SWITCH_IP_2)
                     # 1st switch
-                    hub.spawn(self.addingBwIperfClient, SWITCH_IP_1, SWITCH_IP_2_inBetween, 5001, 50, 0)
-                    hub.spawn(self.addingBwIperfClient, SWITCH_IP_1, SWITCH_IP_2_inBetween, 5002, 42, 20)
+                    hub.spawn(self.addingBwIperfClient, SWITCH_IP_1, SWITCH_IP_2_inBetween, 5001, 50, 10)
+                    hub.spawn(self.addingBwIperfClient, SWITCH_IP_1, SWITCH_IP_2_inBetween, 5002, 44, 30)
                     self.iperfAlready = True
             
 
