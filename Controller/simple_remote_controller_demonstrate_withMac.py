@@ -335,6 +335,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                     self.changedAlready = False
 
                 # step 2: changing the latency in the switch 2 switch connection
+                '''
                 if 60.0 < time.time() - self.startingTime and self.changedAlready == False and 80.0 > time.time() - self.startingTime:
                     latencyValue = '55'
                     # float(self.timestepsize) *10.0 + 10.0
@@ -342,7 +343,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                     self.change_latency_remote(SWITCH_IP_1, INTERFACE_SWITCH_1_TO_SWITCH_2, latencyValue)
                     self.changedAlready = True
                     self.enamurationNumber += 1
-
+                '''
             # changing back?
             '''
             if (80.0 < time.time() - self.startingTime and self.changedAlready == True and MININET == False and TESTTYPE == 'CHANGINGLAT') or (TESTTYPE == 'CHANGINGLATTOSHOWDIFFERENCE' and MININET == False and 99.0 < time.time() - self.startingTime):
