@@ -288,7 +288,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                     #hub.spawn(self.addingBwIperfServer, SWITCH_IP_2)
                     # 1st switch
                     hub.spawn(self.addingBwIperfClient, SWITCH_IP_1, SWITCH_IP_2_inBetween, 5001, 50, 10)
-                    hub.spawn(self.addingBwIperfClient, SWITCH_IP_1, SWITCH_IP_2_inBetween, 5002, 44, 30)
+                    hub.spawn(self.addingBwIperfClient, SWITCH_IP_1, SWITCH_IP_2_inBetween, 5002, 43, 30)
                     self.iperfAlready = True
 
             # incrementing by steps
