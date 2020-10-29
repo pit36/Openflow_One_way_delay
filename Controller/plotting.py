@@ -734,8 +734,8 @@ def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2,
     yArrayPing2 = []
     getPingValues(xArrayPing1, yArrayPing1, pingData1, timeTillStart)
     getPingValues(xArrayPing2, yArrayPing2, pingData2, timeTillStart)
-    ax11.plot(xArrayPing1, yArrayPing1, '--',color= 'royalblue', label='Derived from Ping Switch 1 - Switch 2')
-    ax21.plot(xArrayPing2, yArrayPing2, '+-',color= 'royalblue', label='Derived from Ping')
+    ax11.plot(xArrayPing2, yArrayPing2, '--',color= 'royalblue', label='Derived from Ping Switch 1 - Switch 2')
+    ax21.plot(xArrayPing1, yArrayPing1, '+-',color= 'royalblue', label='Derived from Ping Switch 2 - Switch 1')
 
     # get C2Sw values
     xArray2Sw1 = []
