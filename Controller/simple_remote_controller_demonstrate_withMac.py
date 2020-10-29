@@ -95,7 +95,8 @@ ADDITIONAL_WAITING_TIME = 10
 
 class SimpleSwitch13(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
-
+    def setting_init():
+        pass
     def __init__(self, *args, **kwargs):
         super(SimpleSwitch13, self).__init__(*args, **kwargs)
 
@@ -330,12 +331,12 @@ class SimpleSwitch13(app_manager.RyuApp):
                     self.change_latency_local(INTERFACE_CONTROLLER_TO_SWITCH_2, 60.0)
                     self.changedAlready = True
                     self.enamurationNumber += 1
-                    
+                '''
                 if 50.0 < time.time() - self.startingTime and self.changedAlready == True and 60.0 > time.time() - self.startingTime:
                     self.changedAlready = False
 
                 # step 2: changing the latency in the switch 2 switch connection
-                '''
+                
                 if 60.0 < time.time() - self.startingTime and self.changedAlready == False and 80.0 > time.time() - self.startingTime:
                     latencyValue = '55'
                     # float(self.timestepsize) *10.0 + 10.0
