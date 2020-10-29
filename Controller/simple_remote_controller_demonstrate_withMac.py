@@ -247,6 +247,27 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.change_latency_local(INTERFACE_CONTROLLER_TO_SWITCH_1, latency_C_switch_1)
         self.change_latency_local(INTERFACE_CONTROLLER_TO_SWITCH_2, latency_C_switch_2)
 
+    def resetting_default_setup(self):
+        # Between the switches
+        latency_switch_1_to_2 = 0.0
+        latency_switch_2_to_1 = 0.0
+        self.change_latency_remote(SWITCH_IP_1, INTERFACE_SWITCH_1_TO_SWITCH_2, latency_switch_1_to_2)
+        self.change_latency_remote(SWITCH_IP_2, INTERFACE_SWITCH_2_TO_SWITCH_1, latency_switch_2_to_1)
+        self.change_latency_remote(SWITCH_IP_1, INTERFACE_SWITCH_2_TO_SWITCH_1, 0.0)
+        self.change_latency_remote(SWITCH_IP_2, INTERFACE_SWITCH_1_TO_SWITCH_2, 0.0)
+        self.track_latency_change(SWITCH_IP_1_2, latency_switch_1_to_2)
+        self.track_latency_change(SWITCH_IP_2_2, latency_switch_2_to_1)
+
+        # Between controller and switches
+        latency_switch_1_to_C = 0.0
+        latency_switch_2_to_C = 0.0
+        latency_C_switch_1 = 0.0
+        latency_C_switch_2 = 0.0
+        self.change_latency_remote(SWITCH_IP_1, INTERFACE_SWITCH_1_TO_CONTROLLER, latency_switch_1_to_C)
+        self.change_latency_remote(SWITCH_IP_2, INTERFACE_SWITCH_2_TO_CONTROLLER, latency_switch_2_to_C)
+        self.change_latency_local(INTERFACE_CONTROLLER_TO_SWITCH_1, latency_C_switch_1)
+        self.change_latency_local(INTERFACE_CONTROLLER_TO_SWITCH_2, latency_C_switch_2)
+
     def track_latency_change(self, switchIP, latency):
         if (switchIP not in self.changingLatMap.keys()):
             self.changingLatMap[switchIP] = []
@@ -270,7 +291,7 @@ class SimpleSwitch13(app_manager.RyuApp):
             self.set_default_setup()
 
         if(TESTTYPE == 'ONELONGTIME'):
-            self.set_default_setup()
+            self.resetting_default_setup()
 
         if(TESTTYPE == 'ONELONGTIMEIPERF'):
             self.set_default_setup()
