@@ -187,8 +187,8 @@ class SimpleSwitch13(app_manager.RyuApp):
 
         if(TESTTYPE == 'IPERF'):
             self.monitor_queues()
-            self.change_latency_remote(SWITCH_IP_1, INTERFACE_SWITCH_1_TO_SWITCH_2, 0.0, 3000)
-            self.change_latency_remote(SWITCH_IP_2, INTERFACE_SWITCH_2_TO_SWITCH_1, 0.0, 3000)
+            self.change_latency_remote(SWITCH_IP_1, INTERFACE_SWITCH_1_TO_SWITCH_2, 0.001, 3000)
+            self.change_latency_remote(SWITCH_IP_2, INTERFACE_SWITCH_2_TO_SWITCH_1, 0.001, 3000)
 
         # iperf
         self.iperfAlready = False

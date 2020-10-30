@@ -300,9 +300,9 @@ def plotLatencyRisingBandwith(dataMap, timeTillStart):
     fig2.savefig("second.svg")
     plt.show()
 
-def plotLatencyRisingBandwithRaspi(dataMap, timeTillStart, pingData1, pingData2,saved_backlog1,saved_backlog2, saved_dropped1,saved_dropped2, edgeLeft=10, edgeRight= 80):
+def plotLatencyRisingBandwithRaspi(dataMap, timeTillStart, pingData1, pingData2,saved_backlog1,saved_backlog2, saved_dropped1,saved_dropped2, edgeLeft=10, edgeRight= 60):
     style.setup3()
-    timeTillStart = timeTillStart + 10
+    timeTillStart = timeTillStart + edgeLeft
     style.setup3()
     key1 = list(dataMap.keys())[0]
     key2 = list(dataMap.keys())[1]
