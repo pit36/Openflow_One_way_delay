@@ -2,7 +2,7 @@ import plotting
 import json
 
 ################## getting data ##################################
-path = "data/10_30_2020_13_10_CHANGINGLAT_ECHO/"
+path = "data/xxx_IPERF_ECHO/"
 mininet = False
 pingdata1 = {}
 pingdata2 = {}
@@ -111,11 +111,14 @@ if(mininet == False):
 else:
     startingtime = float(str(pingdata1[list(pingdata1.keys())[0]]))
 
+# changing latency switch - switch
+#plotting.plotLatencyChangeRaspi(datamap, startingtime,pingdata_inbetween1,pingdata_inbetween2)
+
 # Changing latency controller !!!
 #plotting.plotLatencyChangeCONTROLLERRaspi(datamap,startingtime,pingdata_inbetween1,pingdata_inbetween2, saved_echo_timeToC, saved_echo_timeToSw, saved_echo_rtt_to_dpid, pingdata1, pingdata2)
 
 # FUNCTIONS - adding BW with backlog
-#plotting.plotLatencyRisingBandwithRaspi(datamap,startingtime, pingdata_inbetween1, pingdata_inbetween2, saved_backlog1, saved_backlog2, saved_dropped1, saved_dropped2)
+plotting.plotLatencyRisingBandwithRaspi(datamap,startingtime, pingdata_inbetween1, pingdata_inbetween2, saved_backlog1, saved_backlog2, saved_dropped1, saved_dropped2)
 
 # difference diagram
 #plotting.plotDifferenceEchoRTT(saved_rtt_to_dpid,saved_echo_rtt_to_dpid,startingtime)
@@ -126,7 +129,7 @@ else:
 # one measuremnt
 #plotting.plotLatencyChangeStatsOne_withping(datamap,startingtime,'latencyEchoRTT',pingdata_inbetween1,pingdata_inbetween2)
 
-plotting.plotLatencyChangeRaspi(datamap, startingtime,pingdata_inbetween1,pingdata_inbetween2)
+
 
 # else:
 #     first = datamap[list(datamap.keys())[0]]

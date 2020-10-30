@@ -1,5 +1,6 @@
 import matplotlib
 import numpy as np
+from math import sqrt
 
 def setup(width=10, height=5, params={}):
     print("In Setup")
@@ -8,12 +9,12 @@ def setup(width=10, height=5, params={}):
           'text.usetex': True,
           #'axes.usetex': True,
           'text.latex.preamble': ['\\usepackage{gensymb}'],
-          'axes.labelsize': 16, # fontsize for x and y labels (was 10)
-          'axes.titlesize': 16,
-          'font.size': 16, # was 10
-          'legend.fontsize': 16, # was 10
-          'xtick.labelsize': 16,
-          'ytick.labelsize': 16,
+          'axes.labelsize': 10, # fontsize for x and y labels (was 10)
+          'axes.titlesize': 10,
+          'font.size': 10, # was 10
+          'legend.fontsize': 10, # was 10
+          'xtick.labelsize': 10,
+          'ytick.labelsize': 10,
           'figure.figsize': [width,height],
           'font.family': 'serif',
           'figure.subplot.top': 0.95,
@@ -26,6 +27,48 @@ def setup(width=10, height=5, params={}):
 
     matplotlib.rcParams.update(rc)
 
+def get_figsize(width, height, span):
+    if span:
+        fig_width = 529.22128 / 72 # IEEE text width
+    else:
+        fig_width = 258.61064 / 72# IEEE column width
+    if not height:
+        golden_mean = (sqrt(5)-1.0)/2.0    # Aesthetic ratio
+        fig_height = (258.61064 / 72)*golden_mean # height in inches
+        fig_height = fig_height * 0.9
+    else:
+        fig_height = height
+    fig_width = fig_width * width
+    return fig_width, fig_height
+
+def setup3(width=1, *, height=None, span=False, l=0.15, r=0.98, t=0.98, b=0.17, params={}):
+
+    figsize = get_figsize(width, height, span)
+  # see http://matplotlib.org/users/customizing.html for more options
+
+    rc = {'backend': 'ps',
+              'text.usetex': True,
+              'text.latex.preamble': ['\\usepackage{gensymb}'],
+              'axes.labelsize': 8, # fontsize for x and y labels (was 10)
+              'axes.titlesize': 8,
+              'font.size': 8, # was 10
+              'legend.fontsize': 7, # was 10
+              'xtick.labelsize': 8,
+              'ytick.labelsize': 8,
+              'figure.figsize': figsize,
+              'font.family': 'serif',
+              'figure.subplot.left': l,
+              'figure.subplot.right': r,
+              'figure.subplot.bottom': b,
+              'figure.subplot.top': t,
+              'savefig.dpi': 300,
+              'lines.linewidth': 1,
+              'errorbar.capsize': 2,
+    }
+
+    rc.update(params)
+    matplotlib.rcParams.update(rc)
+'''
 def setup3(width=20, height=35, params={}):
     print("In Setup")
     # see http://matplotlib.org/users/customizing.html for more options
@@ -33,13 +76,13 @@ def setup3(width=20, height=35, params={}):
           'text.usetex': True,
           #'axes.usetex': True,
           'text.latex.preamble': ['\\usepackage{gensymb}'],
-          'axes.labelsize': 24, # fontsize for x and y labels (was 10)
-          'axes.titlesize': 24,
-          'font.size': 24, # was 10
-          'legend.fontsize': 24, # was 10
+          'axes.labelsize': 10, # fontsize for x and y labels (was 10)
+          'axes.titlesize': 10,
+          'font.size': 10, # was 10
+          'legend.fontsize': 10, # was 10
           'legend.handlelength': 4,
-          'xtick.labelsize': 24,
-          'ytick.labelsize': 24,
+          'xtick.labelsize': 10,
+          'ytick.labelsize': 10,
           'figure.figsize': [width,height],
           'font.family': 'serif',
           'figure.subplot.top': 0.95,
@@ -50,7 +93,7 @@ def setup3(width=20, height=35, params={}):
     }
     rc.update(params)
     matplotlib.rcParams.update(rc)
-
+'''
 def get_color(coderate):
     coderate = (coderate - 0.5) * 480
     return matplotlib.colors.hsv_to_rgb(np.array([coderate, 0.9, 0.9]))
