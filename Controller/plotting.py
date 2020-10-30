@@ -1089,15 +1089,15 @@ def plotRTTComp (dataMap, timeTillStart, saved_rtt_to_dpid, saved_echo_rtt_to_dp
     lsocket1 = []
     lsocket2 = []
     # socket
-    for elementS1 in socketdata1:
-        c2SwValue = elementS1['TC2Sw']
-        sw2C = elementS1['TSw2C']
-        lsocket1.append(c2SwValue + sw2C)
+    #for elementS1 in socketdata1:
+    #    c2SwValue = elementS1['TC2Sw']
+    #    sw2C = elementS1['TSw2C']
+    #    lsocket1.append(c2SwValue + sw2C)
 
-    for elementS2 in socketdata2:
-        c2SwValue = elementS2['TC2Sw']
-        sw2C = elementS2['TSw2C']
-        lsocket2.append(sw2C + c2SwValue)
+    #for elementS2 in socketdata2:
+    #    c2SwValue = elementS2['TC2Sw']
+    #    sw2C = elementS2['TSw2C']
+    #    lsocket2.append(sw2C + c2SwValue)
 
     # median values
     medianRTT1 = np.median(lRTT1)
@@ -1109,8 +1109,8 @@ def plotRTTComp (dataMap, timeTillStart, saved_rtt_to_dpid, saved_echo_rtt_to_dp
     medianPing1 = np.median(pingValSw1)
     medianPing2 = np.median(pingValSw2)
 
-    medianSocket1 = np.median(lsocket1)
-    medianSocket2 = np.median(lsocket2)
+    #medianSocket1 = np.median(lsocket1)
+    #medianSocket2 = np.median(lsocket2)
 
     avgRTT1 = np.average(lRTT1)
     avgEcho1 = np.average(lEcho1)

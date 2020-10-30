@@ -78,7 +78,7 @@ TESTTYPE = 'ONELONGTIME'
 # ECHORTT -> echo rtt
 # ECHO -> updownmeaurement
 # PORTSTATS -> only recieving portstats
-MEASUREMENTTYPE = 'ECHO'
+MEASUREMENTTYPE = 'ALL'
 
 # If Web Interface should be included
 WITH_WEB_INTERFACE = False
