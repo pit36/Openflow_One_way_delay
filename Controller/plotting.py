@@ -11,11 +11,12 @@ def getxyArrayLatency(xArray, yArray, dataLatency, timeTillStart):
     #print('datalat: {}'.format(dataLatency))
     for i in dataLatency:
 
-        timeDiff = i['timestamp'] - timeTillStart
+        timeDiff = i['timestamp'] - (timeTillStart)
         if (timeDiff < 0):
             timeDiff = 0.00000001
-        xArray.append(timeDiff)
-        yArray.append(i['value'])
+        else:
+            xArray.append(timeDiff)
+            yArray.append(i['value'])
 
 def getxyArrayLatency2(xArray, yArray, dataLatency, timeTillStart):
     #print('datalat: {}'.format(dataLatency))
@@ -303,7 +304,7 @@ def plotLatencyRisingBandwith(dataMap, timeTillStart):
 def plotLatencyRisingBandwithRaspi(dataMap, timeTillStart, pingData1, pingData2,saved_backlog1,saved_backlog2, saved_dropped1,saved_dropped2, edgeLeft=10, edgeRight= 60):
     style.setup3()
     timeTillStart = timeTillStart + edgeLeft
-    style.setup3()
+    #style.setup3()
     key1 = list(dataMap.keys())[0]
     key2 = list(dataMap.keys())[1]
 
@@ -312,13 +313,13 @@ def plotLatencyRisingBandwithRaspi(dataMap, timeTillStart, pingData1, pingData2,
 
     fig1 = plt.figure()
     fig2 = plt.figure()
-    fig3 = plt.figure()
+    #fig3 = plt.figure()
 
     ax21 = fig1.add_subplot()
     ax22 = fig2.add_subplot()
-    ax23 = fig3.add_subplot()
+    ax23 = ax22.twinx()
+    #ax23 = fig3.add_subplot()
 
-    # get ping values
     # get ping values
     xArrayPing1 = []
     yArrayPing1 = []
@@ -328,20 +329,20 @@ def plotLatencyRisingBandwithRaspi(dataMap, timeTillStart, pingData1, pingData2,
     getPingValues(xArrayPing1, yArrayPing1, pingData1, timeTillStart, False)
     getPingValues(xArrayPing2, yArrayPing2, pingData2, timeTillStart, False)
 
-    ax21.plot(xArrayPing2, yArrayPing2, '+',color='royalblue', label=r'Measured Ping')
+    ax21.plot(xArrayPing2, yArrayPing2, '+-',color='royalblue', label=r'Delay derived from ping')
 
     # get queue lenght
     xArrayQueue1 = []
     yArrayQueue1 = []
     getxyArrayLatency2(xArrayQueue1, yArrayQueue1, saved_backlog1, timeTillStart)
-    ax23.plot(xArrayQueue1, yArrayQueue1, 'x-',color= 'royalblue', label=r'Queue Lenght')
+    ax23.plot(xArrayQueue1, yArrayQueue1, 'x-',color= 'royalblue', label=r'Queue lenght')
 
     # get dropped lenght
     xArrayDropped1 = []
     yArrayDropped1 = []
     getxyArrayLatency2(xArrayDropped1, yArrayDropped1, saved_dropped1, timeTillStart)
     #ax23a = ax23.twinx()
-    ax23.plot(xArrayDropped1, yArrayDropped1, '+-',color='tomato', label=r'Dropped Packets')
+    ax23.plot(xArrayDropped1, yArrayDropped1, '+-',color='tomato', label=r'Dropped packets')
 
     # get measured latency values
     # dataLatency =dataMap[1][2]['latency']
@@ -361,7 +362,7 @@ def plotLatencyRisingBandwithRaspi(dataMap, timeTillStart, pingData1, pingData2,
         getxyArrayLatency(xArray2, yArray2, dataMap[key2][key1]['latencyPortStats'], timeTillStart)
 
     #ax11.plot(xArray1, yArray1, label = 'Measured Latency')
-    ax21.plot(xArray2, yArray2,'x-', color= 'tomato', label = 'Measured Latency')
+    ax21.plot(xArray2, yArray2,'x-', color= 'tomato', label = r'Measured delay $d_{S_1-S_2}$')
 
     # plot ping latency
     xPing1To2 = []
@@ -382,7 +383,7 @@ def plotLatencyRisingBandwithRaspi(dataMap, timeTillStart, pingData1, pingData2,
     yArrayBw11 = list(map(lambda x: (x * 8)/(1024), yArrayBw1))
     yArrayBw21 = list(map(lambda x: (x * 8)/(1024), yArrayBw2))
 
-    ax22.plot(xArrayBw1, yArrayBw11, 'x-',color= 'royalblue', label = 'Bandwith')
+    ax22.plot(xArrayBw1, yArrayBw11, '--',color= 'darkgreen', label = r'Measured throughput')
 
     ax21.grid()
     ax22.grid()
@@ -391,9 +392,9 @@ def plotLatencyRisingBandwithRaspi(dataMap, timeTillStart, pingData1, pingData2,
     ax21.xaxis.set_major_locator(ticker.MultipleLocator(tick_spacing))
     ax22.yaxis.set_major_locator(ticker.MultipleLocator(tick_spacing))
     # labels
-    ax21.set_ylabel(r'Latency [ms]')#, fontsize = 18)
-    ax22.set_ylabel(r'Traffic [Mbit/s]')#, fontsize = 18)
-    ax23.set_ylabel(r'Packets')#, fontsize = 18)
+    ax21.set_ylabel(r'Delay [ms]')#, fontsize = 18)
+    ax22.set_ylabel(r'Data rate [Mbit/s]')#, fontsize = 18)
+    ax23.set_ylabel(r'Number packets')#, fontsize = 18)
     ax23.set_xlabel(r'Time [s]')#, fontsize = 18)
 
     ax21.set_xlim(0, edgeRight)
@@ -401,19 +402,21 @@ def plotLatencyRisingBandwithRaspi(dataMap, timeTillStart, pingData1, pingData2,
     ax23.set_xlim(0, edgeRight)
 
     ax22.set_ylim(0, 100)
-    
-    legend1 = ax23.legend(loc='upper left')#, fontsize = 20)
-    legend2 = ax21.legend(loc='upper left')#, fontsize = 20)
-    legend3 = ax22.legend(loc='upper right')
+    legend2 = ax21.legend(bbox_to_anchor=(0,1.02,1,0.2), loc="lower left",
+                mode="expand", borderaxespad=0, ncol=2)#, fontsize = 20)
+    legend1 = ax23.legend(bbox_to_anchor=(0,1.02,1,0.2), loc="lower left",
+                mode="expand", borderaxespad=0, ncol=2)#, fontsize = 20)  
+    legend3 = ax22.legend(bbox_to_anchor=(0,1.16,1,0.2), loc="lower left",
+                mode="expand", borderaxespad=0, ncol=2)
     # check if data time is in intervall
     #fig1.savefig("first.svg")
 
-    fig1.savefig("bw_raising_latency.pdf", format='pdf')#, bbox_inches='tight')
-    fig2.savefig("bw_raising_bw.pdf", format='pdf')#, bbox_inches='tight')
-    fig3.savefig("bw_raising_queue_size.pdf", format='pdf')#, bbox_inches='tight')
+    #fig1.savefig("bw_raising_latency.pdf", format='pdf')#, bbox_inches='tight')
+    #fig2.savefig("bw_raising_bw_queue.pdf", format='pdf')#, bbox_inches='tight')
+    #fig3.savefig("bw_raising_queue_size.pdf", format='pdf')#, bbox_inches='tight')
     fig1.savefig("bw_raising_latency.eps", format='eps')#, bbox_inches='tight')
-    fig2.savefig("bw_raising_bw.eps", format='eps')#, bbox_inches='tight')
-    fig3.savefig("bw_raising_queue_size.eps", format='eps')#, bbox_inches='tight')
+    fig2.savefig("bw_raising_bw_queue.eps", format='eps')#, bbox_inches='tight')
+    #fig3.savefig("bw_raising_queue_size.eps", format='eps')#, bbox_inches='tight')
 
     plt.show()
 
@@ -734,8 +737,8 @@ def plotLatencyChangeRaspi(dataMap, timeTillStart,pingData1,pingData2):
     yArrayPing2 = []
     getPingValues(xArrayPing1, yArrayPing1, pingData1, timeTillStart)
     getPingValues(xArrayPing2, yArrayPing2, pingData2, timeTillStart)
-    ax11.plot(xArrayPing2, yArrayPing2, '+-',color= 'royalblue', label=r'Delay derived from Ping $S_1$ - $S_2$')
-    ax12.plot(xArrayPing1, yArrayPing1, '+-',color= 'royalblue', label=r'Delay derived from Ping $S_2$ - $S_1$')
+    ax11.plot(xArrayPing2, yArrayPing2, '+-',color= 'royalblue', label=r'Delay derived from ping')
+    ax12.plot(xArrayPing1, yArrayPing1, '+-',color= 'royalblue', label=r'Delay derived from ping')
 
     #ax11.vlines(x=42.1,  ymin=70, ymax=100, color='dimgrey',lw=3, linestyle='--')
     #ax21.vlines(x=42.1, ymin=0, ymax=38, color='#E02DE0',lw=3, linestyle='--')
