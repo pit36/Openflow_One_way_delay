@@ -71,7 +71,7 @@ MININET = False
 # ONELONGTIME = one latency measurement
 # ONELONGTIMEIPERF = one latency measurement
 # IMPORTANT: While measurement, RTT is useless because only every second value is taken
-TESTTYPE = 'ONELONGTIME'
+TESTTYPE = 'IPERF'
 
 # ALL -> statisticrequest, echo + echoboth
 # RTT -> statisticreq
@@ -187,8 +187,8 @@ class SimpleSwitch13(app_manager.RyuApp):
 
         if(TESTTYPE == 'IPERF'):
             self.monitor_queues()
-            self.change_latency_remote(SWITCH_IP_1, INTERFACE_SWITCH_1_TO_SWITCH_2, 0.001, 3000)
-            self.change_latency_remote(SWITCH_IP_2, INTERFACE_SWITCH_2_TO_SWITCH_1, 0.001, 3000)
+            self.change_latency_remote(SWITCH_IP_1, INTERFACE_SWITCH_1_TO_SWITCH_2, 25.0, 3000)
+            self.change_latency_remote(SWITCH_IP_2, INTERFACE_SWITCH_2_TO_SWITCH_1, 25.0, 3000)
 
         # iperf
         self.iperfAlready = False
