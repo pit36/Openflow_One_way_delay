@@ -142,9 +142,9 @@ class SimpleSwitch13(app_manager.RyuApp):
         #self.startingTime = 0.0
         self.timeTillPlot = 102.2
         if TESTTYPE == 'ONELONGTIME':
-            self.timeTillPlot = 57600.2
-        if TESTTYPE == 'ONELONGTIMEIPERF':
-            self.timeTillPlot = 576.2
+            self.timeTillPlot = 1000.2
+        #if TESTTYPE == 'ONELONGTIMEIPERF':
+        #    self.timeTillPlot = 576.2
         self.allreadyPlotted = False
 
         self.lastArrivedPackage = {}
@@ -336,7 +336,7 @@ class SimpleSwitch13(app_manager.RyuApp):
             if TESTTYPE == 'CHANGINGLAT' and MININET == False:
                 if 40.0 < time.time() - self.startingTime and self.changedAlready == False and 60.0 > time.time() - self.startingTime:
                 #if self.enamurationNumber*self.timestepsize > time.time() - self.startingTime:
-                    latencyValue1 = '55'
+                    latencyValue1 = '20'
                     self.change_latency_remote(SWITCH_IP_1, INTERFACE_SWITCH_1_TO_SWITCH_2, latencyValue1)
                     self.changedAlready = True
                     self.enamurationNumber += 1

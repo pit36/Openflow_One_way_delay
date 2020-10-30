@@ -40,7 +40,7 @@ def getxyArrayLatencyNoTs(xArray, yArray, dataLatency, timeTillStart, divide=Fal
                 yArray.append(float(i[x])*1000)
 
 def plotLatencyChangeRTT(dataMap, timeTillStart):
-
+    style.setup3()
     fig1 = plt.figure()
     ax11 = fig1.add_subplot(211)
     ax12 = fig1.add_subplot(212)
@@ -141,13 +141,13 @@ def plotLatencyChangeRTT(dataMap, timeTillStart):
     xPing2To1 = []
     yPing1To2 = []
     yPing2To1 = []
-
+    '''
     # open the files
     with open('ping_h1_h2.csv') as f:
         lines1To2 = f.readlines()
     with open('ping_h2_h1.csv') as f:
         lines2To1 = f.readlines()
-
+    
     # fill axises
     for oneToTwo in lines1To2:
         splittedString = oneToTwo.split(";")
@@ -166,7 +166,7 @@ def plotLatencyChangeRTT(dataMap, timeTillStart):
             timestamp = 0
         xPing2To1.append(timestamp)
         yPing2To1.append(float(latencyValue) / 2)
-
+    '''
     ax11.plot(xPing1To2, yPing1To2, 'g', label='Ping')
     ax21.plot(xPing2To1, yPing2To1, 'g', label='Ping')
 
@@ -211,7 +211,7 @@ def plotLatencyChangeRTT(dataMap, timeTillStart):
     plt.show()
 
 def plotLatencyRisingBandwith(dataMap, timeTillStart):
-
+    style.setup3()
     key1 = list(dataMap.keys())[0]
     key2 = list(dataMap.keys())[1]
 
@@ -301,6 +301,7 @@ def plotLatencyRisingBandwith(dataMap, timeTillStart):
     plt.show()
 
 def plotLatencyRisingBandwithRaspi(dataMap, timeTillStart, pingData1, pingData2,saved_backlog1,saved_backlog2, saved_dropped1,saved_dropped2, edgeLeft=10, edgeRight= 80):
+    style.setup3()
     timeTillStart = timeTillStart + 5
     style.setup3()
     key1 = list(dataMap.keys())[0]
@@ -411,6 +412,7 @@ def plotLatencyRisingBandwithRaspi(dataMap, timeTillStart, pingData1, pingData2,
     plt.show()
 
 def plotDifferenceEchoRTT(saved_rtt_to_dpid, saved_echo_rtt_to_dpid, timeTillStart):
+    style.setup3()
     fig1 = plt.figure()
     ax11 = fig1.add_subplot(211)
     ax12 = fig1.add_subplot(212)
@@ -491,7 +493,7 @@ def plotDifferenceEchoRTT(saved_rtt_to_dpid, saved_echo_rtt_to_dpid, timeTillSta
 
 def plotLatencyChangeAllMininet(dataMap, timeTillStart, path):
     print("TIMETILLSTART: {}".format(timeTillStart))
-
+    style.setup3()
     fig1 = plt.figure(figsize=(15, 5))
     ax11 = fig1.subplots()
     # = fig1.add_subplot(211)
@@ -682,7 +684,90 @@ def plotLatencyChangeAllMininet(dataMap, timeTillStart, path):
 
     plt.show()
 
+def plotLatencyChangeRaspi(dataMap, timeTillStart,pingData1,pingData2):
+    style.setup3()
+    timeTillStart = timeTillStart + 7.5
+    plt.rc('xtick', labelsize=14)
+    plt.rc('ytick', labelsize=14)
+    plt.rc('axes', titlesize=14)
+    plt.rc('axes', labelsize=14)
+    fig1 = plt.figure()
+    ax11 = fig1.add_subplot(211)
+    ax12 = fig1.add_subplot(212)    
+
+    # labels
+    ax11.set_xlabel('Time [s]')
+ 
+    ax11.set_ylabel('Latency [ms]')
+    ax12.set_xlabel('Time [s]')
+    ax12.set_ylabel('Latency [ms]')
+
+    # get keys
+    key1 = list(dataMap.keys())[0]
+    key2 = list(dataMap.keys())[1]
+    ax11.set_title(label='Connection Switch 1 - Switch 2', fontsize=17)
+    # get measured latency values Echo Rtt
+    xArrayEchoRtt1 = []
+    yArrayEchoRtt1 = []
+    xArrayEchoRtt2 = []
+    yArrayEchoRtt2 = []
+    # get Echo RTT values
+    getxyArrayLatency(xArrayEchoRtt1, yArrayEchoRtt1, dataMap[key1][key2]['latencyEchoRTT'], timeTillStart)
+    getxyArrayLatency(xArrayEchoRtt2, yArrayEchoRtt2, dataMap[key2][key1]['latencyEchoRTT'], timeTillStart)
+    print("EchoRTT {}".format(yArrayEchoRtt1))
+    # plot Echo RTT values
+    ax11.plot(xArrayEchoRtt1, yArrayEchoRtt1 , color='r', label=r'$L_{S_1-S_2}$')
+    ax12.plot(xArrayEchoRtt2, yArrayEchoRtt2, color='r', label=r'$L_{S_2-S_1}$')
+
+    # get ping values
+    xArrayPing1 = []
+    yArrayPing1 = []
+    xArrayPing2 = []
+    yArrayPing2 = []
+    getPingValues(xArrayPing1, yArrayPing1, pingData1, timeTillStart)
+    getPingValues(xArrayPing2, yArrayPing2, pingData2, timeTillStart)
+    ax11.plot(xArrayPing2, yArrayPing2, '--',color= 'royalblue', label='Derived from Ping Switch 1 - Switch 2')
+    ax12.plot(xArrayPing1, yArrayPing1, '+-',color= 'royalblue', label='Derived from Ping Switch 2 - Switch 1')
+
+    #ax11.vlines(x=42.1,  ymin=70, ymax=100, color='dimgrey',lw=3, linestyle='--')
+    #ax21.vlines(x=42.1, ymin=0, ymax=38, color='#E02DE0',lw=3, linestyle='--')
+    #ax21.vlines(x=42.1, ymin=0, ymax=38, color='dimgrey', lw=3, linestyle='--')
+    #ax21.vlines(x=63.5, ymin=0, ymax=38, color='dimgrey',lw=3, linestyle='--')
+    #ax11.vlines(x=63.5, ymin=70, ymax=100, color='#E02DE0',lw=3, linestyle='--')
+    #ax11.vlines(x=63.5, ymin=70, ymax=100, color='#E02DE0', lw=3, linestyle='--')
+
+    font0 = FontProperties()
+    font = font0.copy()
+    font.set_weight('bold')
+    font.set_size(20)
+
+    #ax11.text(42.5,75,'{1} Changing to asymmetric Latency C-S1',verticalalignment='center',fontproperties=font, color='dimgrey')
+    #ax11.text(64, 75, '{2} Changing to symmetric Latency S1-S2', verticalalignment='center', fontproperties=font, color='#E02DE0')
+    #ax11.text(42.5,75,'{1}',verticalalignment='center',fontproperties=font, color='dimgrey')
+    #ax11.text(64, 75, '{2}', verticalalignment='center', fontproperties=font, color='#E02DE0')
+
+    #ax21.text(42.5, 35, '{1}', verticalalignment='center', fontproperties=font, color='dimgrey')
+    #ax21.text(64, 35, '{2}', verticalalignment='center', fontproperties=font, color='dimgrey')
+
+    #style.setup3()
+    ax11.set_xlim(0, 50.0)
+    ax12.set_xlim(0, 50.0)
+
+    ax11.set_ylim(0, 50.0)
+    ax12.set_ylim(0, 50.0)
+
+    ax11.legend(loc=r'lower right', fontsize=17)
+    ax12.legend(loc=r'lower right', fontsize=16)
+
+    #plt.rcParams.update({'font.size': 22})
+
+    # basic
+    ax11.grid()
+    ax12.grid()
+    plt.show()
+
 def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2, Sw2Con,Con2Sw, saved_echo_rtt_to_dpid, pingVal1, pingVal2):
+    style.setup3()
     plt.rc('xtick', labelsize=14)
     plt.rc('ytick', labelsize=14)
     plt.rc('axes', titlesize=14)
@@ -784,12 +869,12 @@ def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2,
     ax12.plot(xArrayPing1a, yArrayPing1a, '--',color='royalblue', label='Derived from Ping Controller - Switch 2')
     ax22.plot(xArrayPing2a, yArrayPing2a,'--', color='royalblue', label='Ping')
 
-    ax11.vlines(x=42.1,  ymin=70, ymax=100, color='dimgrey',lw=3, linestyle='--')
+    #ax11.vlines(x=42.1,  ymin=70, ymax=100, color='dimgrey',lw=3, linestyle='--')
     #ax21.vlines(x=42.1, ymin=0, ymax=38, color='#E02DE0',lw=3, linestyle='--')
-    ax21.vlines(x=42.1, ymin=0, ymax=38, color='dimgrey', lw=3, linestyle='--')
-    ax21.vlines(x=63.5, ymin=0, ymax=38, color='dimgrey',lw=3, linestyle='--')
+    #ax21.vlines(x=42.1, ymin=0, ymax=38, color='dimgrey', lw=3, linestyle='--')
+    #ax21.vlines(x=63.5, ymin=0, ymax=38, color='dimgrey',lw=3, linestyle='--')
     #ax11.vlines(x=63.5, ymin=70, ymax=100, color='#E02DE0',lw=3, linestyle='--')
-    ax11.vlines(x=63.5, ymin=70, ymax=100, color='#E02DE0', lw=3, linestyle='--')
+    #ax11.vlines(x=63.5, ymin=70, ymax=100, color='#E02DE0', lw=3, linestyle='--')
 
     font0 = FontProperties()
     font = font0.copy()
@@ -798,11 +883,11 @@ def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2,
 
     #ax11.text(42.5,75,'{1} Changing to asymmetric Latency C-S1',verticalalignment='center',fontproperties=font, color='dimgrey')
     #ax11.text(64, 75, '{2} Changing to symmetric Latency S1-S2', verticalalignment='center', fontproperties=font, color='#E02DE0')
-    ax11.text(42.5,75,'{1}',verticalalignment='center',fontproperties=font, color='dimgrey')
-    ax11.text(64, 75, '{2}', verticalalignment='center', fontproperties=font, color='#E02DE0')
+    #ax11.text(42.5,75,'{1}',verticalalignment='center',fontproperties=font, color='dimgrey')
+    #ax11.text(64, 75, '{2}', verticalalignment='center', fontproperties=font, color='#E02DE0')
 
-    ax21.text(42.5, 35, '{1}', verticalalignment='center', fontproperties=font, color='dimgrey')
-    ax21.text(64, 35, '{2}', verticalalignment='center', fontproperties=font, color='dimgrey')
+    #ax21.text(42.5, 35, '{1}', verticalalignment='center', fontproperties=font, color='dimgrey')
+    #ax21.text(64, 35, '{2}', verticalalignment='center', fontproperties=font, color='dimgrey')
 
     #style.setup3()
     ax11.set_xlim(19.9, 100.1)
