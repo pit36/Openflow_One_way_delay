@@ -2,7 +2,7 @@ import plotting
 import json
 
 ################## getting data ##################################
-path = "data/10_30_2020_16_26_CHANGINGLATCONTROLLER_ECHO/"
+path = "data/10_30_2020_17_18_CHANGINGLATCONTROLLER_ECHO/"
 mininet = False
 pingdata1 = {}
 pingdata2 = {}
@@ -115,7 +115,7 @@ else:
 #plotting.plotLatencyChangeRaspi(datamap, startingtime,pingdata_inbetween1,pingdata_inbetween2)
 
 # Changing latency controller !!!
-plotting.plotLatencyChangeCONTROLLERRaspi(datamap,startingtime,pingdata_inbetween1,pingdata_inbetween2, saved_echo_timeToC, saved_echo_timeToSw, saved_echo_rtt_to_dpid, pingdata2, pingdata1)
+plotting.plotLatencyChangeCONTROLLERRaspi(datamap,startingtime,pingdata_inbetween1,pingdata_inbetween2, saved_echo_timeToC, saved_echo_timeToSw, saved_echo_rtt_to_dpid, pingdata1, pingdata2)
 
 # FUNCTIONS - adding BW with backlog
 #plotting.plotLatencyRisingBandwithRaspi(datamap,startingtime, pingdata_inbetween1, pingdata_inbetween2, saved_backlog1, saved_backlog2, saved_dropped1, saved_dropped2)
