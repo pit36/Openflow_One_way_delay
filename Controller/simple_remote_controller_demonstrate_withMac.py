@@ -230,8 +230,8 @@ class SimpleSwitch13(app_manager.RyuApp):
         latency_switch_2_to_1 = 20.0
         self.change_latency_remote(SWITCH_IP_1, INTERFACE_SWITCH_1_TO_SWITCH_2, latency_switch_1_to_2)
         self.change_latency_remote(SWITCH_IP_2, INTERFACE_SWITCH_2_TO_SWITCH_1, latency_switch_2_to_1)
-        self.change_latency_remote(SWITCH_IP_1, INTERFACE_SWITCH_2_TO_SWITCH_1, 25.0)
-        self.change_latency_remote(SWITCH_IP_2, INTERFACE_SWITCH_1_TO_SWITCH_2, 25.0)
+        self.change_latency_remote(SWITCH_IP_1, INTERFACE_SWITCH_2_TO_SWITCH_1, 20.0)
+        self.change_latency_remote(SWITCH_IP_2, INTERFACE_SWITCH_1_TO_SWITCH_2, 20.0)
         self.track_latency_change(SWITCH_IP_1_2, latency_switch_1_to_2)
         self.track_latency_change(SWITCH_IP_2_2, latency_switch_2_to_1)
 
@@ -343,7 +343,7 @@ class SimpleSwitch13(app_manager.RyuApp):
             if TESTTYPE == 'CHANGINGLATCONTROLLER' and MININET == False:
                 # step 1: changing the controller - switch latency
                 if 40.0 < time.time() - self.startingTime and self.changedAlready == False and 50.0 > time.time() - self.startingTime:
-                    self.change_latency_local(INTERFACE_CONTROLLER_TO_SWITCH_2, 40.0)
+                    self.change_latency_local(INTERFACE_CONTROLLER_TO_SWITCH_1, 30.0)
                     self.changedAlready = True
                     self.enamurationNumber += 1
                 '''
