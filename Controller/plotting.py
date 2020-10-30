@@ -40,6 +40,127 @@ def getxyArrayLatencyNoTs(xArray, yArray, dataLatency, timeTillStart, divide=Fal
             else:
                 yArray.append(float(i[x])*1000)
 
+def boxplot_measured_latency (dataMap, timeTillStart, pingVal1, pingVal2):
+    style.setup3()
+    # get keys
+    #print(dataMap)
+    key1 = list(dataMap.keys())[0]
+    key2 = list(dataMap.keys())[1]
+    '''
+    if (len(dataMap[key1][key2]['latency']) > 0):
+        # get measured latency values RTT
+        xArrayRtt1 = []
+        yArrayRtt1 = []
+        xArrayRtt2 = []
+        yArrayRtt2 = []
+        # get RTT values
+        getxyArrayLatency(xArrayRtt1, yArrayRtt1, dataMap[key1][key2]['latency'], timeTillStart)
+        getxyArrayLatency(xArrayRtt2, yArrayRtt2, dataMap[key2][key1]['latency'], timeTillStart)
+        # plot RTT values
+    '''
+    if (len(dataMap[key1][key2]['latencyEchoRTT']) > 0):
+        # get measured latency values Echo Rtt
+        xArrayEchoRtt1 = []
+        yArrayEchoRtt1 = []
+        xArrayEchoRtt2 = []
+        yArrayEchoRtt2 = []
+        # get Echo RTT values
+        getxyArrayLatency(xArrayEchoRtt1, yArrayEchoRtt1, dataMap[key1][key2]['latencyEchoRTT'], timeTillStart)
+        getxyArrayLatency(xArrayEchoRtt2, yArrayEchoRtt2, dataMap[key2][key1]['latencyEchoRTT'], timeTillStart)
+        # get measured latency values Echo
+        xArrayEcho1 = []
+        yArrayEcho1 = []
+        xArrayEcho2 = []
+        yArrayEcho2 = []
+        # get Echo values
+        getxyArrayLatency(xArrayEcho1, yArrayEcho1, dataMap[key1][key2]['latencyEcho'], timeTillStart)
+        getxyArrayLatency(xArrayEcho2, yArrayEcho2, dataMap[key2][key1]['latencyEcho'], timeTillStart)
+
+    # get measured values
+    #mesVal2 = yArrayEchoRtt2
+    mesVal1 = yArrayEchoRtt1 + yArrayEchoRtt2#float(i) for i in (list(yArrayEchoRtt1))]
+    #[float(i) for i in (list(yArrayEchoRtt2))]
+
+    # get ping values
+    pingValSw0= [float(i) for i in (list(pingVal1.values()))]
+    pingValSw2 = [float(i) for i in (list(pingVal2.values()))]
+    pingValSw1 = pingValSw2 + pingValSw0
+    medianPing1 = np.median(pingValSw1)
+    #medianPing2 = np.median(pingValSw2)
+
+    median1 = np.median(mesVal1)
+    #median2 = np.median(mesVal2)
+
+    avgMeas1 = np.average(mesVal1)
+    avgPing1 = np.average(pingValSw1)
+
+    stdMeas1 = np.std(mesVal1)
+    stdPing1 = np.std(pingValSw1)
+
+    #avgMeas2 = np.average(mesVal2)
+    #avgPing2 = np.average(pingValSw2)
+
+    #stdMeas2 = np.std(mesVal2)
+    #stdPing2 = np.std(pingValSw2)
+
+    print("med1: {} medPing1: {} avg1: {} avgPing1: {} std1: {} stdPing1: {}".format(median1,medianPing1,avgMeas1,avgPing1,stdMeas1,stdPing1))
+    #print( "med2: {} medPing2: {} avg2: {} avgPing2: {} std2: {} stdPing2: {}".format(median2, medianPing2, avgMeas2, avgPing2,
+    #                                                                           stdMeas2, stdPing2))
+    dof = len(mesVal1) - 1
+    mean = np.mean(mesVal1)
+    std = np.std(mesVal1, ddof=1)
+    error = t.ppf(0.975, dof) * std / np.sqrt(dof + 1)
+    print("Error: {}".format(error))
+    #combine to sets
+    set1 = [mesVal1, pingValSw1]
+    #set2 = []
+    fig, axes = plt.subplots()#, figsize=(9, 4))
+    #fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(9, 4))
+
+    bplot1 = axes.boxplot(set1,
+                             vert=True,  # vertical box aligmnent
+                             patch_artist=True,
+                             #whis = [5,95],
+                             showfliers = True,
+                             notch=True
+                             )  # fill with color
+    #print(pingValSw2)
+    #print(bplot1)
+    '''
+    print(bplot1['medians'][0].get_xdata())
+    bplot2 = axes[1].boxplot(set2,
+                             vert=True,  # vertical box aligmnent
+                             patch_artist=True,
+                             #whis = [5,95],
+                             showfliers = True,
+                             notch=True
+                             )  # fill with color
+    '''
+    colors=['tomato', 'salmon']
+    for patch, color in zip(bplot1['boxes'], colors):
+        patch.set_facecolor(color)
+    for element in ['medians']:
+        plt.setp(bplot1[element], color='royalblue')
+    #for patch, color in zip(bplot2['boxes'], colors):
+    #    patch.set_facecolor(color)
+    #for element in ['medians']:
+    #    plt.setp(bplot2[element], color='royalblue')
+    #axes[0].set_ylim(0.49,5.5)
+    #axes[1].set_ylim(0.49,5.5)
+    #for ax in axes:
+    axes.yaxis.grid(True)
+        #ax.set_xticks([y + 1 for y in range(len(all_data))], )
+        #ax.set_xlabel('xlabel')
+    axes.set_ylabel('Latency [ms]')#fontsize=20)
+    axes.set_ylim(0, 5)
+
+    #axes.set_xticklabels([r'Measured Latency $S_{1}$ - $S_{2}$',r'Measured $S_{2}$ - $S_{1}$',  r'From Ping $S_{1}$ - $S_{2}$',  r'From Ping $S_{2}$ - $S_{1}$'])
+    axes.set_xticklabels([r'Measured Latency $S_{1}$ - $S_{2}$', r'From Ping $S_{1}$ - $S_{2}$'])
+    #axes[1].set_xticklabels([r'Measured $S_{2}$ - $S_{1}$',  r'Derived from Ping $S_{2}$ - $S_{1}$'])
+    fig.savefig("latency_comp_between_switches.eps", format='eps')
+    plt.show()
+
+
 def plotLatencyChangeRTT(dataMap, timeTillStart):
     style.setup3()
     fig1 = plt.figure()
