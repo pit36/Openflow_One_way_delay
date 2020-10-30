@@ -2,7 +2,7 @@ import plotting
 import json
 
 ################## getting data ##################################
-path = "data/10_29_2020_21_30_IPERF_PORTSTATS/"
+path = "data/10_30_2020_12_40_IPERF_ECHO/"
 mininet = False
 pingdata1 = {}
 pingdata2 = {}
