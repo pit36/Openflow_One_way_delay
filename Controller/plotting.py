@@ -801,6 +801,7 @@ def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2,
     ax22.set_ylabel(r'Delay [ms]')
     # get keys
     key1 = list(dataMap.keys())[0]
+    
     key2 = list(dataMap.keys())[1]
     #ax11.set_title(label=r'Connection Switch 1 - Switch 2')#, fontsize=17)
     #ax12.set_title(label=r'Connection Controller - Switch 2')#, fontsize=17)
@@ -827,7 +828,7 @@ def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2,
     getxyArrayLatency(xArrayEcho2, yArrayEcho2, dataMap[key2][key1]['latencyEcho'], timeTillStart)
     # plot Echo values
     ax11.plot(xArrayEcho1, yArrayEcho1, color='g', label=r'$d_{S_1-S_2}$ derived from asymmetry detection')
-    ax21.plot(xArrayEcho2, yArrayEcho2, '--', color='r', label=r'$d_{S_1-S_2}$ derived from asymmetry detection')
+    ax21.plot(xArrayEcho2, yArrayEcho2, '--', color='r', label=r'$d_{S_2-S_1}$ derived from asymmetry detection')
     print("Echo x:{} y:{}".format(xArrayEcho1, yArrayEcho1))
 
     # get ping values
@@ -838,7 +839,7 @@ def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2,
     getPingValues(xArrayPing1, yArrayPing1, pingData1, timeTillStart)
     getPingValues(xArrayPing2, yArrayPing2, pingData2, timeTillStart)
     ax11.plot(xArrayPing2, yArrayPing2, '+-',color= 'royalblue', label=r'$d_{S_1-S_2}$ derived from ping')
-    ax21.plot(xArrayPing1, yArrayPing1, '+-',color= 'royalblue', label=r'$d_{S_1-S_2}$ derived from ping')
+    ax21.plot(xArrayPing1, yArrayPing1, '+-',color= 'royalblue', label=r'$d_{S_2-S_1}$ derived from ping')
 
     # get C2Sw values
     xArray2Sw1 = []
@@ -916,7 +917,7 @@ def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2,
     ax21.legend(loc=r'lower right')#, fontsize=16)
     ax12.legend(loc=r'lower right')#, fontsize=17)
     ax22.legend(loc=r'upper right')#, fontsize=18)
-
+    print(key1)
     # basic
     ax11.grid()
     ax21.grid()
