@@ -71,7 +71,7 @@ MININET = False
 # ONELONGTIME = one latency measurement
 # ONELONGTIMEIPERF = one latency measurement
 # IMPORTANT: While measurement, RTT is useless because only every second value is taken
-TESTTYPE = 'CHANGINGLATCONTROLLER'
+TESTTYPE = 'ONELONGTIME'
 
 # ALL -> statisticrequest, echo + echoboth
 # RTT -> statisticreq
@@ -95,8 +95,6 @@ ADDITIONAL_WAITING_TIME = 10
 
 class SimpleSwitch13(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
-    def setting_init():
-        pass
     def __init__(self, *args, **kwargs):
         super(SimpleSwitch13, self).__init__(*args, **kwargs)
 

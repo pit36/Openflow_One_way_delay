@@ -778,9 +778,9 @@ def plotLatencyChangeRaspi(dataMap, timeTillStart,pingData1,pingData2):
     fig2.savefig("latency_change_2.pdf", format='pdf')
     plt.show()
 
-def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2, Sw2Con,Con2Sw, saved_echo_rtt_to_dpid, pingVal1, pingVal2):
+def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2, Sw2Con,Con2Sw, saved_echo_rtt_to_dpid, pingVal2, pingVal1):
     style.setup3()
-
+    timeTillStart = timeTillStart + 12
     fig11 = plt.figure()
     fig12 = plt.figure()
     fig21 = plt.figure()
@@ -813,10 +813,9 @@ def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2,
     # get Echo RTT values
     getxyArrayLatency(xArrayEchoRtt1, yArrayEchoRtt1, dataMap[key1][key2]['latencyEchoRTT'], timeTillStart)
     getxyArrayLatency(xArrayEchoRtt2, yArrayEchoRtt2, dataMap[key2][key1]['latencyEchoRTT'], timeTillStart)
-    print("EchoRTT {}".format(yArrayEchoRtt1))
     # plot Echo RTT values
-    ax11.plot(xArrayEchoRtt1, yArrayEchoRtt1 ,'x-', color='r', label=r'$d_{S_1-S_2}$ derived from RTT')
-    ax21.plot(xArrayEchoRtt2, yArrayEchoRtt2,'x-', color='g', label=r'$d_{S_2-S_1}$ derived from RTT')
+    ax11.plot(xArrayEchoRtt1, yArrayEchoRtt1 ,'x-', color='tomato', label=r'$d_{S_1-S_2}$ from RTT')
+    ax21.plot(xArrayEchoRtt2, yArrayEchoRtt2,'x-', color='tomato', label=r'$d_{S_2-S_1}$ from RTT')
 
     # get measured latency values Echo
     xArrayEcho1 = []
@@ -827,9 +826,8 @@ def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2,
     getxyArrayLatency(xArrayEcho1, yArrayEcho1, dataMap[key1][key2]['latencyEcho'], timeTillStart)
     getxyArrayLatency(xArrayEcho2, yArrayEcho2, dataMap[key2][key1]['latencyEcho'], timeTillStart)
     # plot Echo values
-    ax11.plot(xArrayEcho1, yArrayEcho1, color='g', label=r'$d_{S_1-S_2}$ derived from asymmetry detection')
-    ax21.plot(xArrayEcho2, yArrayEcho2, '--', color='r', label=r'$d_{S_2-S_1}$ derived from asymmetry detection')
-    print("Echo x:{} y:{}".format(xArrayEcho1, yArrayEcho1))
+    ax11.plot(xArrayEcho1, yArrayEcho1, 'x-', color='darkgreen', label=r'Detected $d_{S_1-S_2}$')
+    ax21.plot(xArrayEcho2, yArrayEcho2, 'x-', color='darkgreen', label=r'Detected $d_{S_2-S_1}$')
 
     # get ping values
     xArrayPing1 = []
@@ -838,8 +836,8 @@ def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2,
     yArrayPing2 = []
     getPingValues(xArrayPing1, yArrayPing1, pingData1, timeTillStart)
     getPingValues(xArrayPing2, yArrayPing2, pingData2, timeTillStart)
-    ax11.plot(xArrayPing2, yArrayPing2, '+-',color= 'royalblue', label=r'$d_{S_1-S_2}$ derived from ping')
-    ax21.plot(xArrayPing1, yArrayPing1, '+-',color= 'royalblue', label=r'$d_{S_2-S_1}$ derived from ping')
+    ax11.plot(xArrayPing2, yArrayPing2, '.-',color= 'royalblue', label=r'$d_{S_1-S_2}$ from ping')
+    ax21.plot(xArrayPing1, yArrayPing1, '.-',color= 'royalblue', label=r'$d_{S_2-S_1}$ from ping')
 
     # get C2Sw values
     xArray2Sw1 = []
@@ -848,8 +846,8 @@ def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2,
     yArray2Sw2 = []
     getxyArrayLatencyNoTs(xArray2Sw1, yArray2Sw1, Con2Sw[key1], timeTillStart)
     getxyArrayLatencyNoTs(xArray2Sw2, yArray2Sw2, Con2Sw[key2], timeTillStart)
-    ax12.plot(xArray2Sw1, yArray2Sw1, color='g', label=r'Measured $d_{C-S_1}$')
-    ax22.plot(xArray2Sw2, yArray2Sw2, 'g', label=r'Measured $d_{C-S_2}$')
+    ax12.plot(xArray2Sw1, yArray2Sw1, '--',color='darkgreen', label=r'Measured $d_{C-S_1}$')
+    ax22.plot(xArray2Sw2, yArray2Sw2, '--','darkgreen', label=r'Measured $d_{C-S_2}$')
 
     # get EchoRTT values
     xArrayEcho1= []
@@ -859,8 +857,8 @@ def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2,
     getxyArrayLatencyNoTs(xArrayEcho1, yArrayEcho1, saved_echo_rtt_to_dpid[key1], timeTillStart, True)
     getxyArrayLatencyNoTs(xArrayEcho2, yArrayEcho2, saved_echo_rtt_to_dpid[key2], timeTillStart, True)
     print("EchoRTT Values: {}".format(yArrayEcho1))
-    ax12.plot(xArrayEcho1, yArrayEcho1, 'r', label=r'$d_{C-S_1}$ derived from RTT')
-    ax22.plot(xArrayEcho2, yArrayEcho2, 'r', label=r'$d_{C-S_2}$ derived from RTT')
+    ax12.plot(xArrayEcho1, yArrayEcho1, 'x-',color='tomato', label=r'$d_{C-S_1}$ from RTT')
+    ax22.plot(xArrayEcho2, yArrayEcho2, 'x-',color='tomato', label=r'$d_{C-S_2}$ from RTT')
 
     # get Sw2C values
     xArray2C1 = []
@@ -881,48 +879,34 @@ def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2,
     getPingValues(xArrayPing1a, yArrayPing1a, pingVal1, timeTillStart)
     getPingValues(xArrayPing2a, yArrayPing2a, pingVal2, timeTillStart)
     print("Ping Values: {}".format(yArrayPing1a))
-    ax12.plot(xArrayPing1a, yArrayPing1a, '+-',color='royalblue', label=r'$d_{C-S_1}$ derived from ping')
-    ax22.plot(xArrayPing2a, yArrayPing2a,'+-', color='royalblue', label=r'$d_{C-S_2}$ derived from ping')
-
-    #ax11.vlines(x=42.1,  ymin=70, ymax=100, color='dimgrey',lw=3, linestyle='--')
-    #ax21.vlines(x=42.1, ymin=0, ymax=38, color='#E02DE0',lw=3, linestyle='--')
-    #ax21.vlines(x=42.1, ymin=0, ymax=38, color='dimgrey', lw=3, linestyle='--')
-    #ax21.vlines(x=63.5, ymin=0, ymax=38, color='dimgrey',lw=3, linestyle='--')
-    #ax11.vlines(x=63.5, ymin=70, ymax=100, color='#E02DE0',lw=3, linestyle='--')
-    #ax11.vlines(x=63.5, ymin=70, ymax=100, color='#E02DE0', lw=3, linestyle='--')
-
-    #font0 = FontProperties()
-    #font = font0.copy()
-    #font.set_weight('bold')
-    #font.set_size(20)
-
-    #ax11.text(42.5,75,'{1} Changing to asymmetric Latency C-S1',verticalalignment='center',fontproperties=font, color='dimgrey')
-    #ax11.text(64, 75, '{2} Changing to symmetric Latency S1-S2', verticalalignment='center', fontproperties=font, color='#E02DE0')
-    #ax11.text(42.5,75,'{1}',verticalalignment='center',fontproperties=font, color='dimgrey')
-    #ax11.text(64, 75, '{2}', verticalalignment='center', fontproperties=font, color='#E02DE0')
-
-    #ax21.text(42.5, 35, '{1}', verticalalignment='center', fontproperties=font, color='dimgrey')
-    #ax21.text(64, 35, '{2}', verticalalignment='center', fontproperties=font, color='dimgrey')
+    ax12.plot(xArrayPing1a, yArrayPing1a, '.-',color='royalblue', label=r'$d_{C-S_1}$ from ping')
+    ax22.plot(xArrayPing2a, yArrayPing2a,'.-', color='royalblue', label=r'$d_{C-S_2}$ from ping')
 
     #style.setup3()
-    ax11.set_xlim(19.9, 100.1)
-    ax12.set_xlim(19.9, 100.1)
-    ax21.set_xlim(19.9, 100.1)
-    ax22.set_xlim(19.9, 100.1)
+    ax11.set_xlim(0, 50)
+    ax12.set_xlim(0, 50)
+    ax21.set_xlim(0, 50)
+    ax22.set_xlim(0, 50)
 
-    ax11.set_ylim(29.9, 80.1)
-    ax21.set_ylim(29.9, 80.1)
+    ax11.set_ylim(0, 50)
+    ax12.set_ylim(0, 50)
+    ax22.set_ylim(0, 50)
+    ax21.set_ylim(0, 50)
 
-    ax11.legend(loc=r'lower right')#, fontsize=17)
-    ax21.legend(loc=r'lower right')#, fontsize=16)
-    ax12.legend(loc=r'lower right')#, fontsize=17)
-    ax22.legend(loc=r'upper right')#, fontsize=18)
+    ax11.legend(loc='upper left')#, fontsize=17)
+    ax12.legend(loc='upper left')#, fontsize=17)
+    ax21.legend(loc='upper left')#, fontsize=16)
+    ax22.legend(loc='upper right')#, fontsize=18)
     print(key1)
     # basic
     ax11.grid()
     ax21.grid()
     ax12.grid()
     ax22.grid()
+
+    fig11.savefig("C_Lat_Chg_Sw1_Sw2.eps", format='eps')
+    fig12.savefig("C_Lat_Chg_C_Sw.eps", format='eps')
+    fig21.savefig("C_Lat_Chg_Sw2_Sw1.eps", format='eps')
     plt.show()
 
 def plotLatencyChangeAllRaspi(dataMap, timeTillStart, latencyChange1, latencyChange2):
