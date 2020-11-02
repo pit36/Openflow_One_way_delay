@@ -2,7 +2,7 @@ import plotting
 import json
 
 ################## getting data ##################################
-path = "data/10_30_2020_18_45_ONELONGTIME_ECHO/"
+path = "data/yyy_ONELONGTIME_ECHO/"
 mininet = False
 pingdata1 = {}
 pingdata2 = {}
@@ -123,8 +123,11 @@ else:
 # difference diagram
 #plotting.plotDifferenceEchoRTT(saved_rtt_to_dpid,saved_echo_rtt_to_dpid,startingtime)
 
-# NORMAL!:
+# Boxplot difference measurements
 plotting.boxplot_measured_latency(datamap, startingtime, pingdata_inbetween1, pingdata_inbetween2)
+
+# Boxplot between switches
+#plotting.boxplot_latency_C_Sw(datamap, startingtime, saved_rtt_to_dpid, saved_echo_rtt_to_dpid, pingdata1, pingdata2)
 
 # one measuremnt
 #plotting.plotLatencyChangeStatsOne_withping(datamap,startingtime,'latencyEchoRTT',pingdata_inbetween1,pingdata_inbetween2)

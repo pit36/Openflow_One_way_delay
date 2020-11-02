@@ -40,6 +40,107 @@ def getxyArrayLatencyNoTs(xArray, yArray, dataLatency, timeTillStart, divide=Fal
             else:
                 yArray.append(float(i[x])*1000)
 
+def boxplot_latency_C_Sw (dataMap, timeTillStart, saved_rtt_to_dpid, saved_echo_rtt_to_dpid,pingVal1, pingVal2):
+    style.setup3()
+    lRTT1 = []
+    lRTT2 = []
+    lEcho1 = []
+    lEcho2 = []
+
+    for i in range(len(saved_rtt_to_dpid[list(saved_rtt_to_dpid.keys())[0]])):
+        elementRTT = saved_rtt_to_dpid[list(saved_rtt_to_dpid.keys())[0]][i]
+        rttValue = list(elementRTT.values())[0] * 1000
+        lRTT1.append(rttValue)
+
+    for i in range(len(saved_echo_rtt_to_dpid[list(saved_echo_rtt_to_dpid.keys())[0]])):
+        elementEcho = saved_echo_rtt_to_dpid[list(saved_echo_rtt_to_dpid.keys())[0]][i]
+        echoValue = list(elementEcho.values())[0] * 1000
+        lEcho1.append(echoValue)
+
+    for i in range(len(saved_rtt_to_dpid[list(saved_rtt_to_dpid.keys())[1]])):
+        elementRTT = saved_rtt_to_dpid[list(saved_rtt_to_dpid.keys())[1]][i]
+        rttValue = list(elementRTT.values())[0] * 1000
+        lRTT2.append(rttValue)
+
+    for i in range(len(saved_echo_rtt_to_dpid[list(saved_echo_rtt_to_dpid.keys())[1]])):
+        elementEcho = saved_echo_rtt_to_dpid[list(saved_echo_rtt_to_dpid.keys())[1]][i]
+        echoValue = list(elementEcho.values())[0] * 1000
+        lEcho2.append(echoValue)
+
+    # get ping values
+    pingValSw1 = [float(i) for i in (list(pingVal1.values()))]
+    pingValSw2 = [float(i) for i in (list(pingVal2.values()))]
+    pingValSw1 = pingValSw1 + pingValSw2
+    # median values
+    medianRTT1 = np.median(lRTT1)
+    medianEcho1 = np.median(lEcho1)
+    medianPing1 = np.median(pingValSw1)
+
+    avgRTT1 = np.average(lRTT1)
+    avgEcho1 = np.average(lEcho1)
+    avgPing1 = np.average(pingValSw1)
+
+    stdRTT1 = np.std(lRTT1)
+    stdEcho1 = np.std(lEcho1)
+    stdPing1 = np.std(pingValSw1)
+
+
+    stdRTT2 = np.std(lRTT2)
+    stdEcho2 = np.std(lEcho2)
+    stdPing2 = np.std(pingValSw2)
+
+    print("avgRTT1: {}, avgEcho1: {},avgPing1:{}, stdRTT1:  {}stdEcho1 :{}stdPing1 {}".format(avgRTT1, avgEcho1, avgPing1, stdRTT1, stdEcho1, stdPing1))
+    print("Median RTT1: {} Echo1: {} Ping1: {}".format(medianRTT1,medianEcho1,medianPing1))
+
+    #combine to sets
+    set1 = [lRTT1, lEcho1, pingValSw1]
+    #set2 = [lRTT2, lEcho2, pingValSw2]
+
+    fig, axes = plt.subplots()#, figsize=(9, 4))
+
+    bplot1 = axes.boxplot(set1,
+                             vert=True,  # vertical box aligmnent
+                             patch_artist=True,
+    #                         whis = [5,95],
+                             showfliers = True,
+                             notch=True
+                             )  # fill with color
+    '''
+    bplot2 = axes[1].boxplot(set2,
+                             vert=True,  # vertical box aligmnent
+                             patch_artist=True,
+    #                         whis = [5,95],
+                             showfliers = True,
+                             notch=True
+                             )  # fill with color
+    '''
+    #axes[0].set_ylim(0.49,5.5)
+    #axes[1].set_ylim(0.49,5.5)
+    colors = ['tomato', 'salmon', 'tomato', 'salmon']
+    for patch, color in zip(bplot1['boxes'], colors):
+        patch.set_facecolor(color)
+    for element in ['medians']:
+        plt.setp(bplot1[element], color='royalblue')
+    #for patch, color in zip(bplot2['boxes'], colors):
+    #    patch.set_facecolor(color)
+    #for element in ['medians']:
+    #    plt.setp(bplot2[element], color='royalblue')
+
+    #for ax in axes:
+    axes.yaxis.grid(True)
+        #ax.set_xticks([y + 1 for y in range(len(all_data))], )
+        #ax.set_xlabel('xlabel')
+    axes.set_ylabel(r'RTT [ms]')#,fontsize=20)
+    axes.set_ylim(0, 5)
+    #style.setup()
+    #plt.setp(axes, xticklabels=['', 'Echo ', 'Socket', 'Ping'])
+    axes.set_xticklabels([r'Statistic Request', r'Echo Request', r'Ping'])
+    #axes[1].set_xticklabels([r'Statistic R. $S_{2}$', r'Echo R. $S_{2}$', r'Ping $S_{2}$'])
+    #axes[0].tick_params(labelsize=20)
+    #axes[1].tick_params(labelsize=20)
+    fig.savefig("latency_comp_between_C_sw.eps", format='eps')
+    plt.show()
+
 def boxplot_measured_latency (dataMap, timeTillStart, pingVal1, pingVal2):
     style.setup3()
     # get keys
@@ -151,11 +252,11 @@ def boxplot_measured_latency (dataMap, timeTillStart, pingVal1, pingVal2):
     axes.yaxis.grid(True)
         #ax.set_xticks([y + 1 for y in range(len(all_data))], )
         #ax.set_xlabel('xlabel')
-    axes.set_ylabel('Latency [ms]')#fontsize=20)
+    axes.set_ylabel('Delay [ms]')#fontsize=20)
     axes.set_ylim(0, 5)
 
     #axes.set_xticklabels([r'Measured Latency $S_{1}$ - $S_{2}$',r'Measured $S_{2}$ - $S_{1}$',  r'From Ping $S_{1}$ - $S_{2}$',  r'From Ping $S_{2}$ - $S_{1}$'])
-    axes.set_xticklabels([r'Measured Latency $S_{1}$ - $S_{2}$', r'From Ping $S_{1}$ - $S_{2}$'])
+    axes.set_xticklabels([r'$d_{S_{1}-S_{2}}$ from ADM', r'$d_{S_{1} - S_{2}}$ from ping'])
     #axes[1].set_xticklabels([r'Measured $S_{2}$ - $S_{1}$',  r'Derived from Ping $S_{2}$ - $S_{1}$'])
     fig.savefig("latency_comp_between_switches.eps", format='eps')
     plt.show()
@@ -450,13 +551,13 @@ def plotLatencyRisingBandwithRaspi(dataMap, timeTillStart, pingData1, pingData2,
     getPingValues(xArrayPing1, yArrayPing1, pingData1, timeTillStart, False)
     getPingValues(xArrayPing2, yArrayPing2, pingData2, timeTillStart, False)
 
-    ax21.plot(xArrayPing2, yArrayPing2, '+-',color='royalblue', label=r'Delay derived from ping')
+    ax21.plot(xArrayPing2, yArrayPing2, '+-',color='royalblue', label=r'$d_{S_1-S_2}$ from ping')
 
     # get queue lenght
     xArrayQueue1 = []
     yArrayQueue1 = []
     getxyArrayLatency2(xArrayQueue1, yArrayQueue1, saved_backlog1, timeTillStart)
-    ax23.plot(xArrayQueue1, yArrayQueue1, 'x-',color= 'royalblue', label=r'Queue lenght')
+    ax23.plot(xArrayQueue1, yArrayQueue1, 'x-',color= 'royalblue', label=r'Queued packets')
 
     # get dropped lenght
     xArrayDropped1 = []
@@ -483,7 +584,7 @@ def plotLatencyRisingBandwithRaspi(dataMap, timeTillStart, pingData1, pingData2,
         getxyArrayLatency(xArray2, yArray2, dataMap[key2][key1]['latencyPortStats'], timeTillStart)
 
     #ax11.plot(xArray1, yArray1, label = 'Measured Latency')
-    ax21.plot(xArray2, yArray2,'x-', color= 'tomato', label = r'Measured delay $d_{S_1-S_2}$')
+    ax21.plot(xArray2, yArray2,'x-', color= 'tomato', label = r'$d_{S_1-S_2}$ from ADM')
 
     # plot ping latency
     xPing1To2 = []
@@ -504,7 +605,7 @@ def plotLatencyRisingBandwithRaspi(dataMap, timeTillStart, pingData1, pingData2,
     yArrayBw11 = list(map(lambda x: (x * 8)/(1024), yArrayBw1))
     yArrayBw21 = list(map(lambda x: (x * 8)/(1024), yArrayBw2))
 
-    ax22.plot(xArrayBw1, yArrayBw11, '--',color= 'darkgreen', label = r'Measured throughput')
+    ax22.plot(xArrayBw1, yArrayBw11, '--',color= 'darkgreen', label = r'Measured throughput $B$')
 
     ax21.grid()
     ax22.grid()
@@ -513,11 +614,12 @@ def plotLatencyRisingBandwithRaspi(dataMap, timeTillStart, pingData1, pingData2,
     ax21.xaxis.set_major_locator(ticker.MultipleLocator(tick_spacing))
     ax22.yaxis.set_major_locator(ticker.MultipleLocator(tick_spacing))
     # labels
+    ax22.set_xlabel(r'Time [s]')
     ax21.set_ylabel(r'Delay [ms]')#, fontsize = 18)
     ax22.set_ylabel(r'Data rate [Mbit/s]')#, fontsize = 18)
-    ax23.set_ylabel(r'Number packets')#, fontsize = 18)
+    ax23.set_ylabel(r'Number of packets')#, fontsize = 18)
     ax23.set_xlabel(r'Time [s]')#, fontsize = 18)
-
+    ax21.set_xlabel(r'Time [s]')
     ax21.set_xlim(0, edgeRight)
     ax22.set_xlim(0, edgeRight)
     ax23.set_xlim(0, edgeRight)
@@ -802,11 +904,11 @@ def plotLatencyChangeAllMininet(dataMap, timeTillStart, path):
 
     # labels
     ax11.set_xlabel(r'Time [s]')
-    ax11.set_ylabel(r'Latency [ms]')
+    ax11.set_ylabel(r'Delay [ms]')
     # labels
     ax21.set_xlabel(r'Time [s]')
     #ax21.set_xlabel(r'Time (s)', fontsize=9)
-    ax21.set_ylabel(r'Latency [ms]')
+    ax21.set_ylabel(r'Delay [ms]')
 
     print("Add5")
     fig1.savefig("latency_1_2.pdf", format='pdf', bbox_inches='tight')
@@ -829,9 +931,9 @@ def plotLatencyChangeRaspi(dataMap, timeTillStart,pingData1,pingData2):
     # labels
     ax11.set_xlabel(r'Time [s]')
  
-    ax11.set_ylabel(r'Latency [ms]')
+    ax11.set_ylabel(r'Delay [ms]')
     ax12.set_xlabel(r'Time [s]')
-    ax12.set_ylabel(r'Latency [ms]')
+    ax12.set_ylabel(r'Delay [ms]')
 
     # get keys
     key1 = list(dataMap.keys())[0]
@@ -848,8 +950,8 @@ def plotLatencyChangeRaspi(dataMap, timeTillStart,pingData1,pingData2):
     getxyArrayLatency(xArrayEchoRtt2, yArrayEchoRtt2, dataMap[key2][key1]['latencyEchoRTT'], timeTillStart)
     print("EchoRTT {}".format(yArrayEchoRtt1))
     # plot Echo RTT values
-    ax11.plot(xArrayEchoRtt1, yArrayEchoRtt1, 'x-', color='tomato', label=r'Measured delay $d_{S_1-S_2}$')
-    ax12.plot(xArrayEchoRtt2, yArrayEchoRtt2, 'x-', color='tomato', label=r'Measured delay $d_{S_2-S_1}$')
+    ax11.plot(xArrayEchoRtt1, yArrayEchoRtt1, 'x-', color='tomato', label=r'$d_{S_1-S_2}$ from ADM')
+    ax12.plot(xArrayEchoRtt2, yArrayEchoRtt2, 'x-', color='tomato', label=r'$d_{S_2-S_1}$ from ADM')
 
     # get ping values
     xArrayPing1 = []
@@ -858,8 +960,8 @@ def plotLatencyChangeRaspi(dataMap, timeTillStart,pingData1,pingData2):
     yArrayPing2 = []
     getPingValues(xArrayPing1, yArrayPing1, pingData1, timeTillStart)
     getPingValues(xArrayPing2, yArrayPing2, pingData2, timeTillStart)
-    ax11.plot(xArrayPing2, yArrayPing2, '+-',color= 'royalblue', label=r'Delay derived from ping')
-    ax12.plot(xArrayPing1, yArrayPing1, '+-',color= 'royalblue', label=r'Delay derived from ping')
+    ax11.plot(xArrayPing2, yArrayPing2, '+-',color= 'royalblue', label=r'$d_{S_1-S_2}$ from ping')
+    ax12.plot(xArrayPing1, yArrayPing1, '+-',color= 'royalblue', label=r'$d_{S_2-S_1}$ from ping')
 
     #ax11.vlines(x=42.1,  ymin=70, ymax=100, color='dimgrey',lw=3, linestyle='--')
     #ax21.vlines(x=42.1, ymin=0, ymax=38, color='#E02DE0',lw=3, linestyle='--')
@@ -935,8 +1037,8 @@ def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2,
     getxyArrayLatency(xArrayEchoRtt1, yArrayEchoRtt1, dataMap[key1][key2]['latencyEchoRTT'], timeTillStart)
     getxyArrayLatency(xArrayEchoRtt2, yArrayEchoRtt2, dataMap[key2][key1]['latencyEchoRTT'], timeTillStart)
     # plot Echo RTT values
-    ax11.plot(xArrayEchoRtt1, yArrayEchoRtt1 ,'x-', color='tomato', label=r'$d_{S_1-S_2}$ from RTT')
-    ax21.plot(xArrayEchoRtt2, yArrayEchoRtt2,'x-', color='tomato', label=r'$d_{S_2-S_1}$ from RTT')
+    ax11.plot(xArrayEchoRtt2, yArrayEchoRtt2 ,'x-', color='tomato', label=r'$d_{S_1-S_2}$ from RTT')
+    ax21.plot(xArrayEchoRtt1, yArrayEchoRtt1,'x-', color='tomato', label=r'$d_{S_2-S_1}$ from RTT')
 
     # get measured latency values Echo
     xArrayEcho1 = []
@@ -947,8 +1049,8 @@ def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2,
     getxyArrayLatency(xArrayEcho1, yArrayEcho1, dataMap[key1][key2]['latencyEcho'], timeTillStart)
     getxyArrayLatency(xArrayEcho2, yArrayEcho2, dataMap[key2][key1]['latencyEcho'], timeTillStart)
     # plot Echo values
-    ax11.plot(xArrayEcho1, yArrayEcho1, 'x-', color='darkgreen', label=r'Detected $d_{S_1-S_2}$')
-    ax21.plot(xArrayEcho2, yArrayEcho2, 'x-', color='darkgreen', label=r'Detected $d_{S_2-S_1}$')
+    ax11.plot(xArrayEcho2, yArrayEcho2, 'x-', color='darkgreen', label=r'$d_{S_1-S_2}$ from ADM')
+    ax21.plot(xArrayEcho1, yArrayEcho1, 'x-', color='darkgreen', label=r'$d_{S_2-S_1}$ from ADM')
 
     # get ping values
     xArrayPing1 = []
@@ -957,8 +1059,8 @@ def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2,
     yArrayPing2 = []
     getPingValues(xArrayPing1, yArrayPing1, pingData1, timeTillStart)
     getPingValues(xArrayPing2, yArrayPing2, pingData2, timeTillStart)
-    ax11.plot(xArrayPing2, yArrayPing2, '.-',color= 'royalblue', label=r'$d_{S_1-S_2}$ from ping')
-    ax21.plot(xArrayPing1, yArrayPing1, '.-',color= 'royalblue', label=r'$d_{S_2-S_1}$ from ping')
+    ax11.plot(xArrayPing1, yArrayPing1, linestyle='dotted',color= 'royalblue', label=r'$d_{S_1-S_2}$ from ping')
+    ax21.plot(xArrayPing2, yArrayPing2, linestyle='dotted',color= 'royalblue', label=r'$d_{S_2-S_1}$ from ping')
 
     # get C2Sw values
     xArray2Sw1 = []
@@ -967,8 +1069,8 @@ def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2,
     yArray2Sw2 = []
     getxyArrayLatencyNoTs(xArray2Sw1, yArray2Sw1, Con2Sw[key1], timeTillStart)
     getxyArrayLatencyNoTs(xArray2Sw2, yArray2Sw2, Con2Sw[key2], timeTillStart)
-    ax12.plot(xArray2Sw1, yArray2Sw1, '--',color='darkgreen', label=r'Measured $d_{C-S_1}$')
-    ax22.plot(xArray2Sw2, yArray2Sw2, '--','darkgreen', label=r'Measured $d_{C-S_2}$')
+    ax12.plot(xArray2Sw1, yArray2Sw1,'--',color='darkgreen', label=r'$d_{C-S_1}$ from ADM')
+    ax22.plot(xArray2Sw2, yArray2Sw2, '--',color='darkgreen', label=r'$d_{C-S_2}$ from ADM')
 
     # get EchoRTT values
     xArrayEcho1= []
@@ -989,8 +1091,8 @@ def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2,
     getxyArrayLatencyNoTs(xArray2C1, yArray2C1, Sw2Con[key1], timeTillStart)
     getxyArrayLatencyNoTs(xArray2C2, yArray2C2, Sw2Con[key2], timeTillStart)
     print("Sw2C Values: {}".format(yArray2C1))
-    ax12.plot(xArray2C1, yArray2C1, 'y', label=r'Measured $d_{S_1-C}$')
-    ax22.plot(xArray2C2, yArray2C2, 'y', label=r'Measured $d_{S_2-C}$')
+    ax12.plot(xArray2C1, yArray2C1, 'y', label=r'$d_{S_1-C}$ from ADM')
+    ax22.plot(xArray2C2, yArray2C2, 'y', label=r'$d_{S_2-C}$ from ADM')
 
     # get ping C2Sw values
     xArrayPing1a = []
@@ -1000,8 +1102,8 @@ def plotLatencyChangeCONTROLLERRaspi(dataMap, timeTillStart,pingData1,pingData2,
     getPingValues(xArrayPing1a, yArrayPing1a, pingVal1, timeTillStart)
     getPingValues(xArrayPing2a, yArrayPing2a, pingVal2, timeTillStart)
     print("Ping Values: {}".format(yArrayPing1a))
-    ax12.plot(xArrayPing1a, yArrayPing1a, '.-',color='royalblue', label=r'$d_{C-S_1}$ from ping')
-    ax22.plot(xArrayPing2a, yArrayPing2a,'.-', color='royalblue', label=r'$d_{C-S_2}$ from ping')
+    ax12.plot(xArrayPing1a, yArrayPing1a, linestyle='dashdot',color='royalblue', label=r'$d_{C-S_1}$ from ping')
+    ax22.plot(xArrayPing2a, yArrayPing2a,linestyle='dashdot', color='royalblue', label=r'$d_{C-S_2}$ from ping')
 
     #style.setup3()
     ax11.set_xlim(0, 50)
@@ -1389,7 +1491,7 @@ def timeToSwCCompare(saved_rtt_to_dpid, saved_echo_rtt_to_dpid, saved_echo_timeT
     p1 = plt.bar(ind, sw2CAvg, width, color='tomato', yerr=sw2CStd, capsize=7)
     p2 = plt.bar(ind, c2SwAvg, width, color='seagreen', bottom=sw2CAvg, yerr=c2SwStd, capsize=7, hatch='/')
 
-    plt.ylabel('Latency [ms]')
+    plt.ylabel(r'Delay [ms]')
     #plt.title('Latency differences Socket OVS')
     plt.xticks(ind, ('Switch1 Echo', 'Switch1 Socket', 'Switch2 Echo','Switch2 Socket'))
     #plt.yticks(np.arange(0, 10, 1))
@@ -1586,11 +1688,11 @@ def oneLongTimeMininet(dataMap, timeTillStart, path):
 
     # labels
     ax11.set_xlabel(r'Time [s]')
-    ax11.set_ylabel(r'Latency [ms]')
+    ax11.set_ylabel(r'Delay [ms]')
     # labels
     ax21.set_xlabel(r'Time [s]')
     #ax21.set_xlabel(r'Time (s)', fontsize=9)
-    ax21.set_ylabel(r'Latency [ms]')
+    ax21.set_ylabel(r'Delay [ms]')
 
     print("Add5")
     plt.show()
@@ -1798,7 +1900,7 @@ def plotLatComp (dataMap, timeTillStart, pingVal1, pingVal2):
         ax.yaxis.grid(True)
         #ax.set_xticks([y + 1 for y in range(len(all_data))], )
         #ax.set_xlabel('xlabel')
-        ax.set_ylabel('Latency [ms]',fontsize=20)
+        ax.set_ylabel(r'Delay [ms]',fontsize=20)
         ax.set_ylim(-0.5001, 6.0)
 
     print(axes[1])
@@ -1939,11 +2041,11 @@ def plotLatCompMininet(dataMap, timeTillStart, path):
     ax.yaxis.grid(True)
     # ax.set_xticks([y + 1 for y in range(len(all_data))], )
     # ax.set_xlabel('xlabel')
-    ax.set_ylabel('Latency [ms]',fontsize=20)
+    ax.set_ylabel(r'Delay [ms]',fontsize=20)
     ax.set_ylim(-0.5001, 6.0)
     plt.tick_params(labelsize=20)
     #style.setup()
-    plt.setp(ax, xticklabels=[r'Measured $S_{1}$ - $S_{2}$', 'Derived from Ping $S_{1}$ - $S_{2}$'])
+    plt.setp(ax, xticklabels=[r'Measured $S_{1}$ - $S_{2}$', r'Derived from Ping $S_{1}$ - $S_{2}$'])
 
     plt.show()
 
