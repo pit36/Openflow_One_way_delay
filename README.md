@@ -7,8 +7,7 @@
 * Routing with Dijkstra
 * Demonstrating the 
 
-#### Necessary  
-     * http://mininet.org/download/  
+#### Necessary Software and libraries
 * installed ryu
      * https://osrg.github.io/ryu/  
 * Python3
@@ -21,8 +20,7 @@
     * scipy
 
 #### Mininet
-It is possible to use Mininet as Network Emulation. Therefor you have to change the mode in the controller to the Mininet option
-
+It is possible to use Mininet as Network Emulation. Therefor you have to change the mode in the controller to the Mininet option.
 
 ## How do I get set up? ##
 
@@ -38,7 +36,6 @@ sudo ovs-vsctl set-controller br0 tcp:<Controller_IP>:6633
 ip addr add 10.0.0.1/24 dev br0
 ip link set br0 up
 ´´´
-
 
 ### How to deploy:  
 * clone repository
