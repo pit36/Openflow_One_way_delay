@@ -44,7 +44,7 @@ ip link set br0 up
     * "from restDB import db"
     * db.create_all() 
 * Change your IP adresses in `simple_remote_controller_demonstrate_withMac.py`
-* run `python3 simple_remote_controller_demonstrate_withMac.py --observe-links`
+* run `ryu-manager simple_remote_controller_demonstrate_withMac.py --observe-links`
 
 ### Database configuration:
 * for discovering the database: sqlitebrowser recommeded
