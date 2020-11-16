@@ -55,7 +55,7 @@ ip link set br0 up
 * Built with HTML5, chartJS (plots) and sigmaJS (graphs)
 * Data requested by RestAPI
 * run "general.html" in Browser
-
+![Alt text](?raw=Website.png "Screenshot of website with screenshot of topology with 5 switches.")
 
 ### Who do I talk to? ###
 If you have any comments or need help, write an issue or send me an E-Mail:
