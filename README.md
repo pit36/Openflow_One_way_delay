@@ -1,25 +1,17 @@
 # README #
 
-Latency and bandwith monitoring in different setups
-Routing via DFS (not Dijkstra)
-## How do I get set up? ##
+## Project to measure One-Way Delays in OpenFlow Networks
 
-### Setting up ovs:
-sudo ovs-vsctl add-br br0
-sudo ovs-vsctl add-port br0 eth0
-sudo ovs-vsctl set-controller br0 tcp:<Controller_IP>:6633
+### Features
+* Latency and throughput monitoring in different setups possible
+* Routing with Dijkstra
+* Demonstrating the throughput and OWD delays on a website
 
-## For the ping measurement, give the OVS brige br0 an IP:
-ip addr add 10.0.0.1/24 dev br0
-ip link set br0 up
-
-#### Necessary  
-* installed mininet
-     * http://mininet.org/download/  
+#### Necessary Software and libraries
 * installed ryu
      * https://osrg.github.io/ryu/  
-* OpenFlow
-* Python libaries:
+* Python3
+* Python libaries (install with pip3):
     * flask (flask.pocoo.org)
     * flask_sqlalchemy
     * flask_marshmallow
@@ -27,21 +19,32 @@ ip link set br0 up
     * matplotlib
     * scipy
 
+#### Mininet
+It is possible to use Mininet as Network Emulation. Therefor you have to change the mode in the controller to the Mininet option.
+
+## How do I get set up? ##
+
+### Set up Open vSwitch:
+```
+sudo ovs-vsctl add-br br0
+sudo ovs-vsctl add-port br0 eth0
+sudo ovs-vsctl set-controller br0 tcp:<Controller_IP>:6633
+```
+
+## For the ping measurement, give the OVS brige br0 an IP:
+```
+ip addr add 10.0.0.1/24 dev br0
+ip link set br0 up
+```
+
 ### How to deploy:  
 * clone repository
 * install required modules
-* into folder topo_x_switches -> python console 
+* into folder Controller -> python console 
     * "from restDB import db"
     * db.create_all() 
-* run "python topo_two_switches.py"
-
-### Summary of set up:
-+ Setup 2 Switches:
-    + Two Switches connected with link
-    + if requeired: two hosts for iperf
-    + With the ping measurements between the two switches, run: "python topo_two_switches.py --observe-links"
-+ Arbitrary:
-    + defining in topology.py
+* Change your IP adresses in `simple_remote_controller_demonstrate_withMac.py`
+* run `ryu-manager simple_remote_controller_demonstrate_withMac.py --observe-links`
 
 ### Database configuration:
 * for discovering the database: sqlitebrowser recommeded
@@ -53,15 +56,7 @@ ip link set br0 up
 * Data requested by RestAPI
 * run "general.html" in Browser
 
-## TODO:
-* Configuration
-* How to run tests
-* Writing tests
-* Code review
-* Other guidelines
 
 ### Who do I talk to? ###
 If you have any comments or need help, write an issue or send me an E-Mail:
 peter.sossalla[at]tu-dresden.de
-
-![You get it!](https://media1.tenor.com/images/d67770820288f00f71027c287a75e708/tenor.gif?itemid=7957769 "Happy")  
