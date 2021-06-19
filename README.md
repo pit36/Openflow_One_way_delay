@@ -4,8 +4,8 @@
 
 ### Features
 * Latency and throughput monitoring in different setups possible
-* Routing with Dijkstra
-* Demonstrating the throughput and OWD delays on a website
+* Routing is implemened with with Dijkstra
+* Demonstrating current throughput and OWD delays on a website
 
 #### Necessary Software and libraries
 * installed ryu
